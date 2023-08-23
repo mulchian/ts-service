@@ -19,9 +19,9 @@ jobs:
           password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
       - name: Build Docker image
-        run: docker-compose -f docker-compose.yml build
+        run: docker-compose -f docker-compose.yml build -t ts-service
 
       - name: Push Docker image to Azure Container Registry
         run: |
-          docker tag ts-service:latest ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/ts-service:${{ github.sha }}
+          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/ts-service:${{ github.sha }}
           docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/ts-service:${{ github.sha }}
