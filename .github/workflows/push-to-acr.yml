@@ -26,6 +26,6 @@ jobs:
       - name: Build and push Docker images to ACR
         run: |
           docker-compose -f docker-compose.yml build
-          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ IMAGE_NAME }}:${{ github.sha }}
+          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
 
