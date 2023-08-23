@@ -1,0 +1,25 @@
+{
+  "name": "touchdownstars/touchdownstars",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Jannik Wolf",
+      "email": "jannik0097@gmail.com"
+    }
+  ],
+  "require": {
+    "fakerphp/faker": "^1.21.0",
+    "tebru/gson-php": "^0.7.5",
+    "phpmailer/phpmailer": "^6.7.1",
+    "marcin-orlowski/lombok-php": "^1.1.0",
+    "monolog/monolog": "^3.4",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1.9.4",
+    "phpunit/phpunit": "^9.5.27"
+  }
+}
