@@ -19,7 +19,7 @@ jobs:
       - name: Login into Azure Container Registry
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io
+          login-server: ${{ secrets.ACR_REGISTRY_ENDPOINT }}
           username: ${{ secrets.AZ_SP_CLIENT_ID }}
           password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
@@ -29,9 +29,9 @@ jobs:
 
       - name: Docker tag
         run: |
-          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ vars-IMAGE_NAME }} ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Docker push
         run: |
-          docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
 
