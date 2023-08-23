@@ -11,10 +11,10 @@ jobs:
       - name: Checkout GitHub Actions
         uses: actions/checkout@main
 
-#      - name: Login via Azure CLI
-#        uses: azure/login@v1
-#        with:
-#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Login into Azure Container Registry
         uses: azure/docker-login@v1
@@ -23,15 +23,9 @@ jobs:
           username: ${{ secrets.AZ_SP_CLIENT_ID }}
           password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
-      - name: Build and push image
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
-          file: ./docker-compose.yml
-
-#        run: |
-#          docker-compose -f docker-compose.yml build
-#          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/ts-service:${{ github.sha }}
-#          docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/ts-service:${{ github.sha }}
+      - name: Build and push Docker images to ACR
+        run: |
+          docker-compose -f docker-compose.yml build
+          docker tag ts-service ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ IMAGE_NAME }}:${{ github.sha }}
 
