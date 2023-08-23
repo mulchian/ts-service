@@ -28,6 +28,7 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          file: ./docker-compose.yml
 
 #        run: |
 #          docker-compose -f docker-compose.yml build
