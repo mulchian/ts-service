@@ -1,7 +1,7 @@
 <?php
 
-$db_host = getenv('PMA_HOST');
-$db_name = getenv('DB_NAME');
+$db_host = getenv('MYSQL_HOST');
+$db_name = getenv('MYSQL_DBNAME');
 $db_user = getenv('MYSQL_USER');
 $db_password = getenv('MYSQL_PASSWORD');
 
