@@ -41,7 +41,7 @@ jobs:
 
       - name: test variables
         run: |
-          echo $***GITHUB_WORKSPACE***:/app
+          echo "$***GITHUB_WORKSPACE***:/app"
 
       - name: run composer install
         uses: baschny/php-composer-action@v1
