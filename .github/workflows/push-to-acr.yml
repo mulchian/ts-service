@@ -39,6 +39,10 @@ jobs:
           path: ${{ steps.composer_config.outputs.composer_cache_dir }}
           key: composer-v${{ steps.composer_config.outputs.composer_major_version }}
 
+      - name: test variables
+        run: |
+          echo $***GITHUB_WORKSPACE***:/app
+
       - name: run composer install
         uses: baschny/php-composer-action@v1
         with:
