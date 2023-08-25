@@ -26,30 +26,6 @@ jobs:
           username: ${{ secrets.AZ_SP_CLIENT_ID }}
           password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
-      - name: prepare composer
-        id: composer_config
-        uses: baschny/php-composer-action@v1
-        with:
-          composer_version: ${{ env.COMPOSER_VERSION }}
-          command: get_config
-
-      - name: cache composer downloads
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
-          key: composer-v${{ steps.composer_config.outputs.composer_major_version }}
-
-      - name: test variables
-        run: |
-          echo ${{ github.workspace }}
-          echo ${{ github.workspace }}/app/composer.json
-
-      - name: run composer install
-        uses: baschny/php-composer-action@v1
-        with:
-          composer_version: ${{ env.COMPOSER_VERSION }}
-          command: install
-
       - name: docker build
         run: |
           docker build . -f ./php/Dockerfile -t ${{ vars.IMAGE_NAME }}
