@@ -31,8 +31,8 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'true'
         uses: ramsey/composer-install@v2
         with:
-          working-directory: 'app'
-          composer-options: '--prefer-dist --no-progress'
+          working-directory: ${{ github.workspace }}/app
+          composer-options: --prefer-dist --no-progress
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -53,7 +53,7 @@ jobs:
         with:
           name: php-app
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
