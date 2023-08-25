@@ -42,8 +42,7 @@ jobs:
       - name: test variables
         run: |
           echo ${{ github.workspace }}
-          echo ${{ github.workspace }}/app
-          echo ${{ github.workspace }}/php
+          echo ${{ github.workspace }}/app/composer.json
 
       - name: run composer install
         uses: baschny/php-composer-action@v1
