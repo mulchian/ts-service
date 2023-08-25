@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_VERSION: '2.5.8'
     steps:
       - name: Checkout GitHub Actions
         uses: actions/checkout@main
@@ -24,15 +26,34 @@ jobs:
           username: ${{ secrets.AZ_SP_CLIENT_ID }}
           password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
-      - name: Docker compose
-        run: |
-          docker-compose -f docker-compose.yml build
+      - name: prepare composer
+        id: composer_config
+        uses: baschny/php-composer-action@v1
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: get_config
 
-      - name: Docker tag
+      - name: cache composer downloads
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
+          key: composer-v${{ steps.composer_config.outputs.composer_major_version }}
+
+      - name: run composer install
+        uses: baschny/php-composer-action@v1
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: install
+
+      - name: docker build
+        run: |
+          docker build . -f ./php/Dockerfile -t ${{ vars.IMAGE_NAME }}
+
+      - name: docker tag
         run: |
           docker tag ${{ vars.IMAGE_NAME }} ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:latest
 
-      - name: Docker push
+      - name: docker push
         run: |
           docker push ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:latest
 
