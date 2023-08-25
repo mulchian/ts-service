@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PHP app to Azure Web App - ts-service
+name: Build and deploy ts-service
 
 on:
   push:
@@ -25,11 +25,14 @@ jobs:
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
-          files: 'composer.json'
+          files: '/app/composer.json'
 
       - name: Run composer install if composer.json exists
         if: steps.check_files.outputs.files_exists == 'true'
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
+        uses: ramsey/composer-install@v2
+        with:
+          working-directory: 'app'
+          composer-options: '--prefer-dist --no-progress'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -56,5 +59,5 @@ jobs:
         with:
           app-name: 'ts-service'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_21094D10ACAE4390973671C41A36AD2D }}
+          publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
           package: .
