@@ -60,5 +60,5 @@ jobs:
         with:
           app-name: 'ts-service'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_21094D10ACAE4390973671C41A36AD2D }}
+          publish-profile: ${{ secrets.TSSERVICE_PUBLISHPROFILE }}
           package: .
