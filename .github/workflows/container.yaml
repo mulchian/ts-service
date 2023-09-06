@@ -1,0 +1,50 @@
+name: Build and push docker container
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      PHP_APP_VERSION: 1.0.0
+      NGINX_VERSION: 1.0.0
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_REGISTRY_ENDPOINT }}
+          username: ${{ secrets.AZ_SP_CLIENT_ID }}
+          password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
+
+      - name: Install Composer Dependencies
+        working-directory: ./app
+        run: composer install --prefer-dist
+
+      - name: Run Tests
+        working-directory: ./app
+        run: composer run-phpunit
+
+      - name: Build php app image
+        run: docker build --target app -t ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:${{ env.PHP_APP_VERSION }} -f ./php/Dockerfile .
+
+      - name: Build nginx image
+        run: docker build -t ${{ secrets.ACR_REGISTRY_ENDPOINT }}/nginx:${{ env.NGINX_VERSION }} -f ./nginx/Dockerfile .
+
+      - name: Push php app image
+        run: docker push ${{ secrets.ACR_REGISTRY_ENDPOINT }}/${{ vars.IMAGE_NAME }}:${{ env.PHP_APP_VERSION }}
+
+      - name: Push nginx image
+        run: docker push ${{ secrets.ACR_REGISTRY_ENDPOINT }}/nginx:${{ env.NGINX_VERSION }}

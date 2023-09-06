@@ -1,0 +1,36 @@
+services:
+  # nginx
+  web:
+    image: nginx:1.0.0
+    ports:
+      - "80:80"
+  # php
+  app:
+    image: ts-service:1.0.0
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: cache
+      REDIS_PORT: ${REDIS_PORT}
+    extra_hosts:
+      # ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+  # mysql
+  db:
+    image: mysql:8.1
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  # redis
+  cache:
+    image: redis:latest
+volumes:
+  mysql:

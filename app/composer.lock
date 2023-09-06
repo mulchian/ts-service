@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98fc1cbade93eef79a7de06bf6507504",
+    "content-hash": "f3be5e3b8fef201b31bb55becee48d5d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -602,16 +602,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.8.0",
+            "version": "v6.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "df16b615e371d81fb79e506277faea67a1be18f1"
+                "reference": "e88da8d679acc3824ff231fdc553565b802ac016"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/df16b615e371d81fb79e506277faea67a1be18f1",
-                "reference": "df16b615e371d81fb79e506277faea67a1be18f1",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/e88da8d679acc3824ff231fdc553565b802ac016",
+                "reference": "e88da8d679acc3824ff231fdc553565b802ac016",
                 "shasum": ""
             },
             "require": {
@@ -621,13 +621,13 @@
                 "php": ">=5.5.0"
             },
             "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
                 "doctrine/annotations": "^1.2.6 || ^1.13.3",
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
                 "php-parallel-lint/php-parallel-lint": "^1.3.2",
                 "phpcompatibility/php-compatibility": "^9.3.5",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.7.1",
+                "squizlabs/php_codesniffer": "^3.7.2",
                 "yoast/phpunit-polyfills": "^1.0.4"
             },
             "suggest": {
@@ -670,7 +670,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.8.0"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.8.1"
             },
             "funding": [
                 {
@@ -678,7 +678,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-06T14:43:22+00:00"
+            "time": "2023-08-29T08:26:30+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -932,16 +932,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v6.3.2",
+            "version": "v6.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "d176b97600860df13e851538c2df2ad88e9e5ca9"
+                "reference": "e60d00b4f633efa4c1ef54e77c12762d9073e7b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/d176b97600860df13e851538c2df2ad88e9e5ca9",
-                "reference": "d176b97600860df13e851538c2df2ad88e9e5ca9",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/e60d00b4f633efa4c1ef54e77c12762d9073e7b3",
+                "reference": "e60d00b4f633efa4c1ef54e77c12762d9073e7b3",
                 "shasum": ""
             },
             "require": {
@@ -1008,7 +1008,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v6.3.2"
+                "source": "https://github.com/symfony/cache/tree/v6.3.4"
             },
             "funding": [
                 {
@@ -1024,7 +1024,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-27T16:19:14+00:00"
+            "time": "2023-08-05T09:10:27+00:00"
         },
         {
             "name": "symfony/cache-contracts",
@@ -1253,16 +1253,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v6.3.2",
+            "version": "v6.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "3400949782c0cb5b3e73aa64cfd71dde000beccc"
+                "reference": "df1f8aac5751871b83d30bf3e2c355770f8f0691"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/3400949782c0cb5b3e73aa64cfd71dde000beccc",
-                "reference": "3400949782c0cb5b3e73aa64cfd71dde000beccc",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/df1f8aac5751871b83d30bf3e2c355770f8f0691",
+                "reference": "df1f8aac5751871b83d30bf3e2c355770f8f0691",
                 "shasum": ""
             },
             "require": {
@@ -1307,7 +1307,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v6.3.2"
+                "source": "https://github.com/symfony/var-exporter/tree/v6.3.4"
             },
             "funding": [
                 {
@@ -1323,7 +1323,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-26T17:39:03+00:00"
+            "time": "2023-08-16T18:14:47+00:00"
         },
         {
             "name": "tebru/doctrine-annotation-reader",
@@ -1522,6 +1522,98 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "czukowski/phpunit-mock-db",
+            "version": "9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/czukowski/phpunit-mock-db.git",
+                "reference": "649693db5dbac4d19539d57286b99020892d89c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/czukowski/phpunit-mock-db/zipball/649693db5dbac4d19539d57286b99020892d89c6",
+                "reference": "649693db5dbac4d19539d57286b99020892d89c6",
+                "shasum": ""
+            },
+            "require": {
+                "czukowski/phpunit-sql": "^9.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cz\\PHPUnit\\MockDB\\": "classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Korney Czukowski",
+                    "homepage": "http://xn----0tbl7bn.com"
+                }
+            ],
+            "description": "Database Abstraction Layer mocking helpers for PHPUnit",
+            "homepage": "https://github.com/czukowski/phpunit-mock-db",
+            "keywords": [
+                "database",
+                "mock",
+                "phpunit"
+            ],
+            "support": {
+                "issues": "https://github.com/czukowski/phpunit-mock-db/issues",
+                "source": "https://github.com/czukowski/phpunit-mock-db/tree/master"
+            },
+            "time": "2020-02-20T05:56:40+00:00"
+        },
+        {
+            "name": "czukowski/phpunit-sql",
+            "version": "9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/czukowski/phpunit-sql.git",
+                "reference": "5ab966ec7fafc0ee35d749f00d37359795387670"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/czukowski/phpunit-sql/zipball/5ab966ec7fafc0ee35d749f00d37359795387670",
+                "reference": "5ab966ec7fafc0ee35d749f00d37359795387670",
+                "shasum": ""
+            },
+            "require": {
+                "phpunit/phpunit": "~9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cz\\PHPUnit\\SQL\\": "classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Korney Czukowski",
+                    "homepage": "http://xn----0tbl7bn.com"
+                }
+            ],
+            "description": "SQL strings testing helpers for PHPUnit",
+            "homepage": "https://github.com/czukowski/phpunit-sql",
+            "keywords": [
+                "phpunit",
+                "sql"
+            ],
+            "support": {
+                "issues": "https://github.com/czukowski/phpunit-sql/issues",
+                "source": "https://github.com/czukowski/phpunit-sql/tree/9.0"
+            },
+            "time": "2020-02-20T05:28:43+00:00"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "2.0.0",
@@ -1820,16 +1912,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.32",
+            "version": "1.10.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c47e47d3ab03137c0e121e77c4d2cb58672f6d44"
+                "reference": "03b1cf9f814ba0863c4e9affea49a4d1ed9a2ed1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c47e47d3ab03137c0e121e77c4d2cb58672f6d44",
-                "reference": "c47e47d3ab03137c0e121e77c4d2cb58672f6d44",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/03b1cf9f814ba0863c4e9affea49a4d1ed9a2ed1",
+                "reference": "03b1cf9f814ba0863c4e9affea49a4d1ed9a2ed1",
                 "shasum": ""
             },
             "require": {
@@ -1878,7 +1970,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-24T21:54:50+00:00"
+            "time": "2023-09-04T12:20:53+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -3323,7 +3415,9 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "php": "^8.2",
         "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "ext-json": "*"
     },
     "platform-dev": [],
