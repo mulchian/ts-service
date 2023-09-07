@@ -1,6 +1,6 @@
 <?php
 
-namespace touchdownstars\user;
+namespace touchdownstars\tests\user;
 
 use PHPUnit\Framework\TestCase;
 
