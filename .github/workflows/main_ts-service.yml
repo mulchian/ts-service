@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - ts-service
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://touchdownstarsregistry.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_836ffc15c994424387b9bec2547fd578 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_d4895bdfaa0c47fc937934f71495841f }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: touchdownstarsregistry.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_836ffc15c994424387b9bec2547fd578 }}/ts-service:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'ts-service'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e94cbab4328845dd86bd9a649391d0dd }}
+        images: 'touchdownstarsregistry.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_836ffc15c994424387b9bec2547fd578 }}/ts-service:${{ github.sha }}'
