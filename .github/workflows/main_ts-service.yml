@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: touchdownstarsregistry.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_836ffc15c994424387b9bec2547fd578 }}/ts-service:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./php/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
