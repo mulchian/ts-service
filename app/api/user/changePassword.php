@@ -13,21 +13,19 @@ if (isset($pdo, $log)) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $content = trim(file_get_contents("php://input"));
         $input = json_decode($content, true);
-        if (!empty($input['username']) && !empty($input['email'])) {
-            $username = $input['username'];
-            $email = $input['email'];
-            $activationLink = $input['activationLink'];
+        if (!empty($input['userId']) && !empty($input['password'])) {
+            $userId = $input['userId'];
+            $password = $input['password'];
 
-            $user = $userController->fetchUserByNameOrMail($username, $email);
+            $user = $userController->fetchUserById($userId);
             if ($user) {
                 // return boolean "requested" that the user can be informed
-                echo json_encode($userController->sendNewPasswordMail($user, $activationLink));
+                echo json_encode($userController->changeUserPassword($user, $password));
             } else {
                 // no user found
-                $log->info('Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.');
+                $log->info('Die User-ID ist nicht bekannt.');
                 echo json_encode(false);
             }
         }
     }
 }
-exit;

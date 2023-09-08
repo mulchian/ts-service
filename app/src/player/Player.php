@@ -110,7 +110,7 @@ class Player extends Helper
     private Type $type;
     private array $statistics = array();
 
-    private int $ovr = 0;
+    private float $ovr = 0.0;
 
     public function getOVR(): int
     {
@@ -131,7 +131,7 @@ class Player extends Helper
                 }
             }
         }
-        return $this->ovr;
+        return (int) $this->ovr;
     }
 
     public function getJson(): string

@@ -179,14 +179,18 @@ class UserController
         return $this->pdo->lastInsertId();
     }
 
-    public function sendNewPasswordMail(User $user, string $activationLink = null): bool
+    public function sendNewPasswordMail(User $user, string $changePasswordPath = null): bool
     {
         //Sendet dem Benutzer eine Mail zur Passwortrücksetzung zu
-        if (!$activationLink) {
-            $activationLink = 'https://' . $_SERVER['HTTP_HOST'] . '/index.php?changePassword=' . $user->getId() . '&valid=' . (time() + 86400);
+//        $activationLink = 'https://' . $_SERVER['HTTP_HOST'] . '/index.php?changePassword=' . $user->getId() . '&valid=' . (time() + 86400);
+        $activationLink = 'https://' . $_SERVER['HTTP_HOST'];
+        if ($changePasswordPath) {
+            $activationLink .= $changePasswordPath . '?user=';
         } else {
-            $activationLink .= '?user=' . $user->getId() . '&valid=' . (time() + 86400);
+            $activationLink .= '/index.php?changePassword=';
         }
+        $activationLink .= $user->getId() . '&valid=' . (time() + 86400);
+        $this->log->debug('Activation Link: ' . $activationLink);
 
         $content = "Hallo " . $user->getUsername() . ",<br>";
         $content .= "du möchtest dein Passwort ändern. Klicke auf folgenden Link, um dein Passwort zu ändern.<br>";
