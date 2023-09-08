@@ -111,8 +111,8 @@ if (isset($pdo, $log)) :
                 </div>
             </div>
         </div>
-        <script src="/app/scriptsipts/team/coaching.js"></script>
-        <script src="/app/scriptsipts/util/tooltipCustom.js"></script>
+        <script src="/scripts/team/coaching.js"></script>
+        <script src="/scripts/util/tooltipCustom.js"></script>
     <?php
     endif;
 endif;

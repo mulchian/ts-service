@@ -209,8 +209,8 @@ if (isset($pdo, $log)) :
             </div>
         </div>
 
-        <script src="/app/scriptsipts/util/tooltipCustom.js"></script>
-        <script src="/app/scriptsipts/buero/friendly.js"></script>
+        <script src="/scripts/util/tooltipCustom.js"></script>
+        <script src="/scripts/buero/friendly.js"></script>
     <?php
     endif;
 endif;

@@ -398,7 +398,7 @@ if (isset($pdo, $log)):
             </form>
         </div>
 
-        <script src="/app/scriptsipts/team/train.js"></script>
+        <script src="/scripts/team/train.js"></script>
 
     <?php
     endif;

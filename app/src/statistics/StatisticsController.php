@@ -330,7 +330,7 @@ class StatisticsController
             'fumbles' => $statistics->getFumbles(),
             'lostFumbles' => $statistics->getLostFumbles(),
             'interceptions' => $statistics->getInterceptions(),
-            'timeOfPossession' => $statistics->getTop(),
+            'timeOfPossession' => $statistics->getTimeOfPossession(),
             'idTeam' => $idTeam,
             'newPaAtt' => $statistics->getPaAtt(),
             'newPaYds' => $statistics->getPaYds(),
@@ -351,7 +351,7 @@ class StatisticsController
             'newFumbles' => $statistics->getFumbles(),
             'newLostFumbles' => $statistics->getLostFumbles(),
             'newInterceptions' => $statistics->getInterceptions(),
-            'newTimeOfPossession' => $statistics->getTop()
+            'newTimeOfPossession' => $statistics->getTimeOfPossession()
         ]);
 
         return $this->pdo->lastInsertId();
@@ -706,7 +706,7 @@ class StatisticsController
     {
         $teamStatistics = $this->getTeamStatisticsForGame($gameId, $team->getStatistics() ?? array(), $team->getId());
 
-        $teamStatistics->setTop($teamStatistics->getTop() + $gameplayTime);
+        $teamStatistics->setTop($teamStatistics->getTimeOfPossession() + $gameplayTime);
 
         $this->setTeamStatistics($team, $teamStatistics);
     }

@@ -10,7 +10,7 @@ body {
     margin-bottom: 20px;
     padding-top: 136px;
     padding-bottom: 20px;
-    background-image: url('/app/resources/background.jpg');
+    background-image: url('/resources/background.jpg');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;

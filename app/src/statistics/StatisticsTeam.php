@@ -58,8 +58,8 @@ use Lombok\Setter;
  * @method void setLostFumbles(int $lostFumbles)
  * @method int getInterceptions()
  * @method void setInterceptions(int $interceptions)
- * @method int getTop()
- * @method void setTop(int $top)
+ * @method int getTimeOfPossession()
+ * @method void setTimeOfPossession(int $top)
  * @method int getIdTeam()
  * @method void setIdTeam(int $idTeam)
  */
@@ -98,7 +98,7 @@ class StatisticsTeam extends Helper
     /**
      * @int $top - Time of Possession in seconds
      */
-    private int $top = 0;
+    private int $timeOfPossession = 0;
     private int $idTeam;
 
     public function getOvrYards(): int

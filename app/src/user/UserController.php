@@ -135,10 +135,10 @@ class UserController
         $selectStmt->execute(['username' => $user->getUsername()]);
         $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
 
-        $saveUser = 'INSERT INTO `t_user` (id, username, email, password, realname, city, gender, birthday, registerDate, lastActiveTime, status, isDeactivated, activationIsSent, isActivated) 
+        $saveUser = 'INSERT INTO `t_user` (id, username, email, password, realname, city, gender, birthday, registerDate, lastActiveTime, status, deactivated, activationSent, activated) 
                             VALUES (:id, :username, :email, :password, :realname, :city, :gender, :birthday, NOW(), :lastActiveTime, :status, :isDeactivated, :activationIsSent, :isActivated) 
                             ON DUPLICATE KEY UPDATE email = :newEmail, password = :newPassword, realname = :newRealname, city = :newCity, gender = :newGender, birthday = :newBirthday, 
-                                                    lastActiveTime = :newLastActiveTime, status = :newStatus, isDeactivated = :newIsDeactivated, activationIsSent = :newActivationIsSent, isActivated = :newIsActivated;';
+                                                    lastActiveTime = :newLastActiveTime, status = :newStatus, deactivated = :newIsDeactivated, activationSent = :newActivationIsSent, activated = :newIsActivated;';
         $saveStmt = $this->pdo->prepare($saveUser);
         $saveStmt->execute([
             'id' => $id ?? null,

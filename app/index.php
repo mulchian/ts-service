@@ -57,10 +57,10 @@ if (isset($log)) {
 
 if (isset($log) && (!isset($_SESSION) || !isset($_SESSION['user']))) {
     $log->info('Keine Session bzw. kein User: ' . print_r($_SESSION ?? array(), true));
-    $log->debug('POST: ' . print_r($_POST, true));
-    $log->debug('POST-Length: ' . count($_POST));
-    $log->debug('GET: ' . print_r($_GET, true));
-    $log->debug('GET-Length: ' . count($_GET));
+//    $log->debug('POST: ' . print_r($_POST, true));
+//    $log->debug('POST-Length: ' . count($_POST));
+//    $log->debug('GET: ' . print_r($_GET, true));
+//    $log->debug('GET-Length: ' . count($_GET));
     if (!isset($_SESSION['user']) && count($_GET) > 0 && isset($_GET['site']) && !in_array($_GET['site'], $allowedSites)) {
         redirect('index.php');
     }
@@ -70,10 +70,8 @@ if (isset($pdo, $log)) {
     // Zeitstempel heute um Mitternacht
     $today = strtotime('today + 1 minute');
     // Wenn die Session älter als heute Morgen ist, müssen Saison und Spieltag aktualisiert werden.
-    // Lese Main-Information aus: Saison und Spieltag
-    if (!isset($_SESSION['season']) && !isset($_SESSION['gameday'])) {
-        updateMainInformation($pdo, $log);
-    } else if (!empty($_SESSION['created']) && $_SESSION['created'] < $today) {
+    if ((!isset($_SESSION['season']) && !isset($_SESSION['gameday']))
+        || (!empty($_SESSION['created']) && $_SESSION['created'] < $today)) {
         updateMainInformation($pdo, $log);
     }
 }

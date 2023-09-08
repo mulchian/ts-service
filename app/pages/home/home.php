@@ -49,4 +49,4 @@ $today = $todayDate->format('l');
 </div>
 
 <!-- Script for home.php -->
-<script src="/app/scriptsipts/home/home.js"></script>
+<script src="/scripts/home/home.js"></script>

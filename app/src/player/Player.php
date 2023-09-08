@@ -98,30 +98,16 @@ class Player extends Helper
     private array $skills = array();
     private ?int $idTeam = null;
 
-    /**
-     * @var Status $status - class Status with the actual players status
-     */
+    private int $idStatus;
     private Status $status;
-    /**
-     * @var Character $character - class Character with the players character
-     */
+    private int $idCharacter;
     private Character $character;
-    /**
-     * @var Contract|null $contract - class Contract with the players contract
-     */
+    private ?int $idContract = null;
     private ?Contract $contract = null;
-    /**
-     * @var Draftposition|null $draftposition - class Draftposition with the players position in his draft
-     */
+    private ?int $idDraftposition = null;
     private ?Draftposition $draftposition = null;
     private int $idType;
-    /**
-     * @var Type $type - class Type with the players playing type
-     */
     private Type $type;
-    /**
-     * @var array $statisticsPlayer - class StatisticsPlayer with the statistics of the player
-     */
     private array $statistics = array();
 
     private int $ovr = 0;

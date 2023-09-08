@@ -27,4 +27,5 @@ class Stadium extends Helper
     private string $name;
     private string $description;
     private array $buildings;
+    private int $idTeam;
 }

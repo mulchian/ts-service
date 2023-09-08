@@ -16,7 +16,7 @@ services:
     volumes:
       - ./app:/var/www/html
       - ./php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
-#      - ./php/conf.d/php.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./php/conf.d/php.conf:/usr/local/etc/php-fpm.d/www.conf
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}

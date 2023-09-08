@@ -59,7 +59,9 @@ class Employee extends Helper implements JsonSerializable
     private int $unemployedSeasons;
     private int $marketvalue;
     private ?int $idTeam = null;
+    private int $idJob;
     private Job $job;
+    private ?int $idContract = null;
     private ?Contract $contract = null;
 
     public function jsonSerialize(): array

@@ -89,7 +89,7 @@ if (isset($pdo, $log, $_SESSION['team'], $_SESSION['season'])) :
                                 <div class="col-sm-2">
                                     <?php if (isset($game['result'])) : ?>
                                         <a role="button" class="btn btn-secondary"
-                                           href="/app/index.php?site=league&do=gamecenter&game=<?php echo $game['id']; ?>">
+                                           href="/index.php?site=league&do=gamecenter&game=<?php echo $game['id']; ?>">
                                             Gamecenter
                                         </a>
                                     <?php elseif ($recalculate) : ?>
@@ -99,7 +99,7 @@ if (isset($pdo, $log, $_SESSION['team'], $_SESSION['season'])) :
                                         </button>
                                     <?php else: ?>
                                         <a role="button" class="btn btn-secondary"
-                                           href="/app/index.php?site=league&do=matchup&game=<?php echo $game['id']; ?>">
+                                           href="/index.php?site=league&do=matchup&game=<?php echo $game['id']; ?>">
                                             Matchup
                                         </a>
                                     <?php endif; ?>
@@ -112,7 +112,7 @@ if (isset($pdo, $log, $_SESSION['team'], $_SESSION['season'])) :
         <?php endforeach; ?>
     </div>
 
-    <script src="/app/scriptsipts/league/schedule.js"></script>
+    <script src="/scripts/league/schedule.js"></script>
     <?php
     $log->debug('schedule.php finished after ' . ((hrtime(true) - $start) / 1e+6) . ' ms');
 endif;

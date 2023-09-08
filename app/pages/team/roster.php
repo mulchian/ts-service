@@ -55,7 +55,7 @@ if (isset($_SESSION['team'])) {
                             <td <?php echo getPlayerModalDataset($player); ?>><?php echo $player->getType()->getPosition()->getPosition(); ?></td>
                             <td <?php echo getPlayerModalDataset($player); ?>><?php echo $player->getOVR(); ?></td>
                             <td <?php echo getPlayerModalDataset($player); ?>><?php echo $player->getAge(); ?></td>
-                            <td <?php echo getPlayerModalDataset($player); ?>><?php echo $player->getFirstName() . ' roster.php' . $player->getLastName(); ?></td>
+                            <td <?php echo getPlayerModalDataset($player); ?>><?php echo $player->getFirstName() . ' ' . $player->getLastName(); ?></td>
                             <td <?php echo getPlayerModalDataset($player); ?>>
                                 <?php for ($i = 0; $i < floor($player->getTalent() / 2); $i++) : ?>
                                     <i class="fas fa-star"></i>
@@ -122,5 +122,5 @@ if (isset($_SESSION['team'])) {
     </div>
 </div>
 
-<script src="/app/scriptsipts/util/tooltipCustom.js"></script>
-<script src="/app/scriptsipts/team/roster.js"></script>
+<script src="/scripts/util/tooltipCustom.js"></script>
+<script src="/scripts/team/roster.js"></script>

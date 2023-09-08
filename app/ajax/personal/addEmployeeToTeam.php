@@ -40,10 +40,10 @@ if (isset($pdo, $log)) {
                             if ($moral >= 0.75) {
                                 $employee->setMoral($moral);
                                 $contract = $contractController->createContract($employee->getMarketvalue(), $salary, $timeOfContract);
-                                if (isset($contract) && !empty($contract)) {
+                                if (!empty($contract)) {
                                     $employee->setContract($contract);
                                     $employee->setIdTeam($team->getId());
-                                    // Weil Employee vorher kein Team hatte muss als Team null für die Suche des Employees mitgegeben werden.
+                                    // Weil Employee vorher kein Team hatte, muss als Team null für die Suche des Employees mitgegeben werden.
                                     // Dies prüft gleichzeitig, dass der Employee kein Team hat, bevor er eingestellt wird.
                                     if ($employeeController->saveEmployee($employee, null, $contract) > 0) {
                                         $employeeIsInTeam = true;

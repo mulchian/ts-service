@@ -19,6 +19,7 @@ use Lombok\Helper;
 #[Getter]
 class Position extends Helper
 {
+    private int $id;
     private string $position;
     private string $description;
     private int $countStarter;

@@ -22,7 +22,7 @@ function getPlayerModalDataset(Player $player): string
                 <!-- Zuerst die Stammdaten des Spielers in den Header, darunter die Tabs. -->
                 <div class="row">
                     <div class="col-sm-1">
-                        <img src="/app/resourcesrces/pick_six_profile.png" alt="Pick Six Profile" width="48" height="48">
+                        <img src="/resources/pick_six_profile.png" alt="Pick Six Profile" width="48" height="48">
                     </div>
                     <div class="col-sm-3">
                         <h6 id="lblName">Spieler</h6>
@@ -33,7 +33,7 @@ function getPlayerModalDataset(Player $player): string
                         <label id="lblType">Typ</label>
                     </div>
                     <div class="col-sm-1">
-                        <img src="/app/resourcesrces/pick_six_profile.png" alt="Pick Six Profile" width="48" height="48">
+                        <img src="/resources/pick_six_profile.png" alt="Pick Six Profile" width="48" height="48">
                     </div>
                     <div class="col-sm-2">
                         <div class="row">
@@ -198,5 +198,5 @@ function getPlayerModalDataset(Player $player): string
     </div>
 </div>
 
-<script src="/app/scriptsipts/contract/contract.js"></script>
-<script src="/app/scriptsipts/player/player.js"></script>
+<script src="/scripts/contract/contract.js"></script>
+<script src="/scripts/player/player.js"></script>

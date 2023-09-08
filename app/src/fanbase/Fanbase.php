@@ -27,4 +27,5 @@ class Fanbase
     private int $amount;
     private ?float $satisfaction;
     private ?int $expectedWins;
+    private ?int $idTeam = null;
 }

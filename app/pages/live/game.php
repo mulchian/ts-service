@@ -162,7 +162,7 @@ if (isset($pdo, $log)) :
             <script nomodule>
                 console.info(`Your browser doesn't support native JavaScript modules.`);
             </script>
-            <script type="module" src="/app/scriptsipts/live/game.js"></script>
+            <script type="module" src="/scripts/live/game.js"></script>
 
         <?php
         endif;

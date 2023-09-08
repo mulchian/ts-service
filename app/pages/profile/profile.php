@@ -197,7 +197,7 @@ if (isset($pdo, $log)) :
             </div>
         </div>
 
-        <script src="/app/scriptsipts/profile/profile.js"></script>
+        <script src="/scripts/profile/profile.js"></script>
     <?php
     endif; endif;
 ?>

@@ -1,1 +1,1 @@
-<a href="/app/index.php?logout">Logout</a>
+<a href="/index.php?logout">Logout</a>

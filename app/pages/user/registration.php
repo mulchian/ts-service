@@ -167,18 +167,18 @@ if (isset($passwordPattern, $emailPattern)):
             <input class="form-control" type="text" placeholder="<?php echo $error; ?>" readonly>
         </div>
         <div class="d-flex justify-content-center links">
-            <a href="/app/index.php?lgn=0" class="ml-2">Log dich ein!</a>
+            <a href="/index.php?lgn=0" class="ml-2">Log dich ein!</a>
         </div>
     </div>
 <?php endif; ?>
     <div class="mt-2">
         <div class="d-flex justify-content-end">
-            <a href="/app/index.php?lgn=0" class="btn small_back_Btn">Zurück</a>
+            <a href="/index.php?lgn=0" class="btn small_back_Btn">Zurück</a>
         </div>
     </div>
 
-    <script src="../scripts/util/tooltipCustom.js"></script>
-    <script src="../scripts/user/registration.js"></script>
+    <script src="/scripts/util/tooltipCustom.js"></script>
+    <script src="/scripts/user/registration.js"></script>
     <script type="text/javascript">
         $(function () {
             $('#username').focus();

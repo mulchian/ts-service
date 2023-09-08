@@ -13,7 +13,7 @@ use Lombok\Setter;
  * Class Contract
  * @package touchdownstars\contract
  *
- * @method int getId()
+ * @method int|null getId()
  * @method void setId(int $id)
  * @method int getSalary()
  * @method void setSalary(int $salary)
@@ -25,7 +25,7 @@ use Lombok\Setter;
 #[Setter, Getter]
 class Contract extends Helper implements JsonSerializable
 {
-    private int $id;
+    private ?int $id = null;
     private int $salary;
     private int $signingBonus;
     private int $endOfContract;

@@ -221,6 +221,7 @@ btnVerhandeln.on("click", function () {
             extendContractModal(employee);
         });
         CONTRACT_MODAL.modal('show');
+        PERSONAL_MODAL.modal('hide');
 
         btnEinstellen.show();
     }

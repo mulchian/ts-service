@@ -65,8 +65,8 @@ if (isset($_SESSION['team'])) :
             ?>
         </div>
     </div>
-    <script src="/app/scriptsipts/util/tooltipCustom.js"></script>
-    <script src="/app/scriptsipts/team/lineup.js"></script>
+    <script src="/scripts/util/tooltipCustom.js"></script>
+    <script src="/scripts/team/lineup.js"></script>
 <?php endif; ?>
 
 

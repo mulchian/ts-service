@@ -233,9 +233,9 @@ if (isset($pdo, $log, $_GET['game'], $_SESSION['team'])) :
                                 <td><?php echo $vsTeamStatistics->getInterceptions(); ?></td>
                             </tr>
                             <tr>
-                                <td><?php echo $teamStatistics->getTop(); ?></td>
+                                <td><?php echo $teamStatistics->getTimeOfPossession(); ?></td>
                                 <td>TIME OF POSSESSION</td>
-                                <td><?php echo $vsTeamStatistics->getTop(); ?></td>
+                                <td><?php echo $vsTeamStatistics->getTimeOfPossession(); ?></td>
                             </tr>
                             </tbody>
                         </table>
@@ -287,5 +287,5 @@ if (isset($pdo, $log, $_GET['game'], $_SESSION['team'])) :
         </div>
     </div>
 
-    <script src="/app/scriptsipts/league/gamecenter.js"></script>
+    <script src="/scripts/league/gamecenter.js"></script>
 <?php endif; ?>

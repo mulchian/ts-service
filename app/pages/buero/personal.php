@@ -72,7 +72,7 @@ if (isset($pdo, $log)) :
                                             return $value->getJob()->getName() == $job->getName();
                                         }))[0];
                                         ?>
-                                        <h6 class="card-title"><?php echo $employee->getFirstName() . ' personal.php' . $employee->getLastName(); ?></h6>
+                                        <h6 class="card-title"><?php echo $employee->getFirstName() . ' ' . $employee->getLastName(); ?></h6>
                                         <div class="card-text">
                                             <div class="row">
                                                 <div class="col text-warning"><?php echo $employee->getOvr(); ?></div>
@@ -271,8 +271,8 @@ if (isset($pdo, $log)) :
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                        <button id="btnModalEinstellen" type="button" class="btn btn-primary d-none">Einstellen</button>
-                        <button id="btnModalVerlaengern" type="button" class="btn btn-primary d-none">Verlängern
+                        <button id="btnModalEinstellen" type="button" class="btn btn-primary" style="display: none">Einstellen</button>
+                        <button id="btnModalVerlaengern" type="button" class="btn btn-primary" style="display: none">Verlängern
                         </button>
                     </div>
                 </div>
@@ -280,7 +280,7 @@ if (isset($pdo, $log)) :
         </div>
 
         <!-- Script for personal.php -->
-        <script src="/app/scriptsipts/contract/contract.js"></script>
-        <script src="/app/scriptsipts/buero/personal.js"></script>
+        <script src="/scripts/contract/contract.js"></script>
+        <script src="/scripts/buero/personal.js"></script>
 
     <?php endif; endif; ?>

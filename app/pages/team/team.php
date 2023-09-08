@@ -36,4 +36,4 @@ if (isset($_GET['do'])) {
     ?>
 </div>
 
-<script src="/app/scriptsipts/team/team.js"></script>
+<script src="/scripts/team/team.js"></script>
