@@ -147,7 +147,7 @@ PLAYER_MODAL.on('hide.bs.modal', function () {
     $('#lblNationality').text('');
     $('#lblHeight').text('');
     $('#lblWeight').text('');
-    $('#lblMarketvalue').text('');
+    $('#lblMarketValue').text('');
     $('#lblExperience').text('');
     $('#lblCharacter').text('');
 });
@@ -168,7 +168,7 @@ function createNavGeneral(player, team) {
     $('#lblNationality').text(player.nationality);
     $('#lblHeight').text(player.height + ' cm');
     $('#lblWeight').text(player.weight + ' kg');
-    $('#lblMarketvalue').text(currencyFormat.format(player.marketvalue));
+    $('#lblMarketValue').text(currencyFormat.format(player.marketValue));
     $('#lblExperience').text(player.experience + (player.experience === 1 ? ' Saison' : ' Saisons'));
     $('#lblCharacter').text(player.character.description);
 }
@@ -220,8 +220,8 @@ function createNavSkills(player, skillNames) {
 
 function createNavContract(player) {
     btnExtendPlayerContract.data('idPlayer', player.id);
-    calcStartContractValues(player.contract.salary, player.marketvalue);
-    calcSalaryRange(player.marketvalue);
+    calcStartContractValues(player.contract.salary, player.marketValue);
+    calcSalaryRange(player.marketValue);
     if (player.contract.end_of_contract >= 1) {
         $("#slctTimeOfContract option[value='1']").remove();
     }

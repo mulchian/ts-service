@@ -163,7 +163,7 @@ PERSONAL_MODAL.on('show.bs.modal', function (event) {
             let personalDataObject = [];
 
             employees.forEach(function (item) {
-                item = JSON.parse(item);
+                // item = JSON.parse(item);
                 let talent = '';
                 for (let i = 0; i < Math.floor(item.talent / 2); i++) {
                     talent += '<i class="fas fa-star"></i>';
@@ -181,9 +181,9 @@ PERSONAL_MODAL.on('show.bs.modal', function (event) {
                     talent: talent,
                     experience: item.experience,
                     ovr: item.ovr,
-                    salary: currencyFormat.format(Math.floor(item.marketvalue * 20 / 100)),
-                    jobName: JSON.parse(item.job).name,
-                    marketvalue: item.marketvalue
+                    salary: currencyFormat.format(Math.floor(item.marketValue * 20 / 100)),
+                    jobName: item.job.name,
+                    marketValue: item.marketValue
                 };
 
                 personalDataObject.push(employee);
@@ -193,7 +193,7 @@ PERSONAL_MODAL.on('show.bs.modal', function (event) {
             tblPersonal.bootstrapTable('load', personalDataObject);
 
             tblPersonal.bootstrapTable('hideColumn', 'id');
-            tblPersonal.bootstrapTable('hideColumn', 'marketvalue');
+            tblPersonal.bootstrapTable('hideColumn', 'marketValue');
             tblPersonal.show();
         } else {
             if (null != data.errorMessage) {
@@ -215,7 +215,7 @@ btnVerhandeln.on("click", function () {
 
         let salary = employee.salary.replace('.', '');
         salary = parseInt(salary.substring(0, salary.length - 2));
-        calcStartContractValues(salary, employee.marketvalue);
+        calcStartContractValues(salary, employee.marketValue);
 
         CONTRACT_MODAL.on('show.bs.modal', function () {
             extendContractModal(employee);
@@ -235,7 +235,7 @@ function extendContractModal(employee) {
 
     btnVerlaengern.data('idEmployee', employee.id);
     btnEinstellen.data('idEmployee', employee.id);
-    calcSalaryRange(employee.marketvalue);
+    calcSalaryRange(employee.marketValue);
 }
 
 CONTRACT_MODAL.on('hide.bs.modal', function () {
@@ -250,7 +250,7 @@ function extendContract(element) {
         employee.jobName = employee.job.name;
         employee.name = employee.first_name + ' ' + employee.last_name;
 
-        calcStartContractValues(Math.floor(employee.marketvalue * 20 / 100), employee.marketvalue);
+        calcStartContractValues(Math.floor(employee.marketValue * 20 / 100), employee.marketValue);
 
         CONTRACT_MODAL.on('show.bs.modal', function () {
             extendContractModal(employee, signingBonus, timeOfContract);

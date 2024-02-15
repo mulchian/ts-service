@@ -5,6 +5,7 @@ use touchdownstars\team\TeamController;
 
 $logFile = 'stadium';
 include($_SERVER['DOCUMENT_ROOT'] . '/init.php');
+include('../team/util.php');
 
 session_start();
 
@@ -13,14 +14,11 @@ if (isset($pdo, $log)) {
     $stadiumController = new StadiumController($pdo, $log);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        if (!empty($_SESSION['team'])) {
-            $team = $_SESSION['team'];
-            $stadium = $team->getStadium();
-            echo json_encode($stadium);
-        } else if (!empty($_GET['userId'])) {
-            $userId = $_GET['userId'];
-            $team = $teamController->fetchTeam($userId);
+        $team = getTeam($log, $teamController);
+
+        if ($team) {
             $stadium = $stadiumController->fetchStadium($team);
+            $log->debug('Stadium is fetched: ' . $stadium->getName());
             echo json_encode($stadium);
         }
     }

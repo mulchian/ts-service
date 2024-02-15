@@ -35,8 +35,8 @@ use touchdownstars\employee\job\Job;
  * @method void setMoral(float $moral)
  * @method int getUnemployedSeasons()
  * @method void setUnemployedSeasons(int $unemployedSeasons)
- * @method int getMarketvalue()
- * @method void setMarketvalue(int $marketvalue)
+ * @method int getMarketValue()
+ * @method void setMarketValue(int $marketValue)
  * @method int|null getIdTeam()
  * @method void setIdTeam(int|null $idTeam)
  * @method Job getJob()
@@ -57,7 +57,7 @@ class Employee extends Helper implements JsonSerializable
     private float $experience;
     private ?float $moral;
     private int $unemployedSeasons;
-    private int $marketvalue;
+    private int $marketValue;
     private ?int $idTeam = null;
     private int $idJob;
     private Job $job;
@@ -77,10 +77,10 @@ class Employee extends Helper implements JsonSerializable
             'experience' => $this->getExperience(),
             'moral' => $this->getMoral(),
             'unemployedSeasons' => $this->getUnemployedSeasons(),
-            'marketvalue' => $this->getMarketvalue(),
+            'marketValue' => $this->getMarketValue(),
             'idTeam' => $this->getIdTeam(),
-            'job' => json_encode($this->getJob()),
-            'contract' => json_encode($this->getContract())
+            'job' => $this->getJob(),
+            'contract' => $this->getContract()
         ];
     }
 }

@@ -65,8 +65,6 @@ class UserController
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         $user = $stmt->fetch(PDO::FETCH_CLASS);
 
-        $this->log->debug('User: ' . print_r($user, true));
-
         if ($user) {
             $passwordHash = $user->getPassword();
 

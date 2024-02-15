@@ -33,14 +33,14 @@ if (isset($pdo, $log)) {
                 if (null != $player->getIdTeam() && $player->getIdTeam() == $team->getId() &&
                     (($player->getContract()->getEndOfContract() < 2 && $timeOfContract >= 1) ||
                         ($player->getContract()->getEndOfContract() == 2 && $timeOfContract > 2))) {
-                    $playerCost = $salary + $contractController->calcSigningBonus($player->getMarketvalue(), $timeOfContract);
+                    $playerCost = $salary + $contractController->calcSigningBonus($player->getMarketValue(), $timeOfContract);
                     if ($playerCost <= $team->getSalaryCap()) {
-                        $moral = round($salary / ($player->getMarketvalue() * 20 / 100), 2);
+                        $moral = round($salary / ($player->getMarketValue() * 20 / 100), 2);
                         if ($moral >= 0.75) {
                             $player->setMoral($moral);
                             $contract = $player->getContract();
                             $contract->setSalary($salary);
-                            $contract->setSigningBonus($contractController->calcSigningBonus($player->getMarketvalue(), $timeOfContract));
+                            $contract->setSigningBonus($contractController->calcSigningBonus($player->getMarketValue(), $timeOfContract));
                             $contract->setEndOfContract($timeOfContract);
                             if ($playerController->savePlayer($player) > 0 && $contractController->saveContract($contract) > 0) {
                                 $player->setContract($contract);

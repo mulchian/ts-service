@@ -111,7 +111,7 @@ function getPlayerModalDataset(Player $player): string
                             <li class="list-group-item">
                                 <div class="clearfix">
                                     <label class="h6 float-left font-weight-bold">Marktwert</label>
-                                    <label id="lblMarketvalue" class="float-right"></label>
+                                    <label id="lblMarketValue" class="float-right"></label>
                                 </div>
                             </li>
                             <li class="list-group-item">

@@ -34,12 +34,12 @@ if (isset($pdo, $log)) {
                 $employee = $employeeController->fetchEmployee($idEmployee);
                 if (!empty($employee)) {
                     if (null == $employee->getIdTeam()) {
-                        $employeeCost = $salary + $contractController->calcSigningBonus($employee->getMarketvalue(), $timeOfContract);
+                        $employeeCost = $salary + $contractController->calcSigningBonus($employee->getMarketValue(), $timeOfContract);
                         if ($employeeCost <= $team->getSalaryCap()) {
-                            $moral = round($salary / ($employee->getMarketvalue() * 20 / 100), 2);
+                            $moral = round($salary / ($employee->getMarketValue() * 20 / 100), 2);
                             if ($moral >= 0.75) {
                                 $employee->setMoral($moral);
-                                $contract = $contractController->createContract($employee->getMarketvalue(), $salary, $timeOfContract);
+                                $contract = $contractController->createContract($employee->getMarketValue(), $salary, $timeOfContract);
                                 if (!empty($contract)) {
                                     $employee->setContract($contract);
                                     $employee->setIdTeam($team->getId());

@@ -15,11 +15,11 @@ class ContractController
         $this->pdo = $pdo;
     }
 
-    public function createContract($marketvalue, $salary, $endOfContract): ?Contract
+    public function createContract($marketValue, $salary, $endOfContract): ?Contract
     {
         $contract = new Contract();
         $contract->setSalary($salary);
-        $contract->setSigningBonus($this->calcSigningBonus($marketvalue, $endOfContract));
+        $contract->setSigningBonus($this->calcSigningBonus($marketValue, $endOfContract));
         $contract->setEndOfContract($endOfContract);
         $id = $this->saveContract($contract);
 
@@ -61,7 +61,7 @@ class ContractController
         $selectStmt->execute(['idEmployee' => $idEmployee]);
         $selectStmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\contract\\Contract');
         $contract = $selectStmt->fetch(PDO::FETCH_CLASS);
-        if (isset($contract) && !empty($contract)) {
+        if (!empty($contract)) {
             return $contract;
         }
         return null;
@@ -86,8 +86,8 @@ class ContractController
         return $deleteStmt->rowCount();
     }
 
-    public function calcSigningBonus(int $marketvalue, int $timeOfContract): int
+    public function calcSigningBonus(int $marketValue, int $timeOfContract): int
     {
-        return (int)floor(($marketvalue * (5 * $timeOfContract) / 100) * $timeOfContract);
+        return (int)floor(($marketValue * (5 * $timeOfContract) / 100) * $timeOfContract);
     }
 }

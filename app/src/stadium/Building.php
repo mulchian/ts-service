@@ -3,6 +3,7 @@
 
 namespace touchdownstars\stadium;
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -23,7 +24,7 @@ use Lombok\Setter;
  * @method void setDescription(string $description)
  */
 #[Setter, Getter]
-class Building extends Helper
+class Building extends Helper implements JsonSerializable
 {
     private int $id;
     private string $name;
@@ -32,4 +33,15 @@ class Building extends Helper
     private string $description;
     // TODO: BuildingEffect implementieren
     // private $buildingEffect;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'level' => $this->getLevel(),
+            'maxLevel' => $this->getMaxLevel(),
+            'description' => $this->getDescription()
+        ];
+    }
 }

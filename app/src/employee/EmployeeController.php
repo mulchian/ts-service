@@ -116,7 +116,7 @@ class EmployeeController
     {
         if (!empty($jobName)) {
             $selectEmployee = 'SELECT te.id, te.lastName, te.firstName, te.age, te.nationality, te.ovr, te.talent, te.experience, 
-                                te.moral, te.unemployedSeasons, te.marketvalue
+                                te.moral, te.unemployedSeasons, te.marketValue
                                 FROM `t_employee` te JOIN t_job tj ON te.idJob = tj.id 
                                 WHERE idTeam IS NULL AND name = :name;';
             $selectStmt = $this->pdo->prepare($selectEmployee);
@@ -154,7 +154,7 @@ class EmployeeController
         $selectStmt = $this->pdo->prepare('SELECT id from `t_employee` where (idTeam is not null and idTeam = :idTeam and idJob = :idJob) 
                                or (idTeam is null and idJob = :scndIdJob and lastName = :lastName and firstName = :firstName and nationality = :nationality);');
         $selectStmt->execute([
-            'idTeam' => isset($team) && !empty($team) ? $team->getId() : null,
+            'idTeam' => $team?->getId(),
             'idJob' => $employee->getJob()->getId(),
             'lastName' => $employee->getLastName(),
             'firstName' => $employee->getFirstName(),
@@ -163,11 +163,11 @@ class EmployeeController
         ]);
         $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
 
-        $marketvalue = $this->calcMarketvalue($employee);
-        $employee->setMarketvalue($marketvalue);
-        $insertStmt = $this->pdo->prepare('INSERT INTO `t_employee` (id, idJob, idTeam, lastName, firstName, age, nationality, ovr, talent, experience, moral, marketvalue, idContract) ' .
-            'VALUES (:id, :idJob, :idTeam, :lastName, :firstName, :age, :nationality, :ovr, :talent, :experience, :moral, :marketvalue, :idContract) ' .
-            'ON DUPLICATE KEY UPDATE idTeam = :newIdTeam, age = :newAge, ovr = :newOvr, experience = :newExperience, moral = :newMoral, marketvalue = :newMarketvalue, idContract = :newIdContract;');
+        $marketValue = $this->calcMarketValue($employee);
+        $employee->setMarketValue($marketValue);
+        $insertStmt = $this->pdo->prepare('INSERT INTO `t_employee` (id, idJob, idTeam, lastName, firstName, age, nationality, ovr, talent, experience, moral, marketValue, idContract) ' .
+            'VALUES (:id, :idJob, :idTeam, :lastName, :firstName, :age, :nationality, :ovr, :talent, :experience, :moral, :marketValue, :idContract) ' .
+            'ON DUPLICATE KEY UPDATE idTeam = :newIdTeam, age = :newAge, ovr = :newOvr, experience = :newExperience, moral = :newMoral, marketValue = :newMarketValue, idContract = :newIdContract;');
         $insertStmt->execute([
             'id' => $id ?? null,
             'idJob' => $employee->getJob()->getId(),
@@ -180,15 +180,15 @@ class EmployeeController
             'talent' => $employee->getTalent(),
             'experience' => $employee->getExperience(),
             'moral' => $employee->getMoral(),
-            'marketvalue' => $employee->getMarketvalue(),
-            'idContract' => isset($contract) && !empty($contract) ? $contract->getId() : null,
+            'marketValue' => $employee->getMarketValue(),
+            'idContract' => $contract?->getId(),
             'newIdTeam' => $employee->getIdTeam(),
             'newAge' => $employee->getAge(),
             'newOvr' => $employee->getOvr(),
             'newExperience' => $employee->getExperience(),
             'newMoral' => $employee->getMoral(),
-            'newMarketvalue' => $employee->getMarketvalue(),
-            'newIdContract' => isset($contract) && !empty($contract) ? $contract->getId() : null,
+            'newMarketValue' => $employee->getMarketValue(),
+            'newIdContract' => $contract?->getId(),
         ]);
 
         return $this->pdo->lastInsertId();
@@ -201,7 +201,7 @@ class EmployeeController
         return $deleteStmt->rowCount();
     }
 
-    private function calcMarketvalue(Employee $employee): int
+    private function calcMarketValue(Employee $employee): int
     {
         $jobWeightings = [
             'General Manager' => 0.7,
@@ -258,9 +258,9 @@ class EmployeeController
         }
 
         // Marktwert = (OVR * OVRvalue * 100000) * POSvalue * ALTERvalue / TALENTvalue
-        $marketvalue = round(($ovr * $ovrWeighting * 100000 * $jobWeighting * $ageWeighting) / $talentWeighting);
+        $marketValue = round(($ovr * $ovrWeighting * 100000 * $jobWeighting * $ageWeighting) / $talentWeighting);
 
-        return (int)$marketvalue;
+        return (int)$marketValue;
     }
 
     public function calcEmployeeSalary(Team $team): int

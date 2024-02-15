@@ -161,13 +161,13 @@ class PlayerController
         // Skills speichern benötigt die Player-ID
         $skillController->insertSkillsToPlayer($player);
 
-        $player->setMarketvalue($this->calcMarketvalue($position, $player->getAge(), $player->getTalent(), $player->getOVR()));
+        $player->setMarketValue($this->calcMarketValue($position, $player->getAge(), $player->getTalent(), $player->getOVR()));
 
         if (!$isBotTeam) {
             // Erstellung des Start-Contracts
             $contractController = new ContractController($this->pdo);
-            $startSalary = floor($player->getMarketvalue() * 20 / 100 * $player->getMoral());
-            $contract = $contractController->createContract($player->getMarketvalue(), $startSalary, 3);
+            $startSalary = floor($player->getMarketValue() * 20 / 100 * $player->getMoral());
+            $contract = $contractController->createContract($player->getMarketValue(), $startSalary, 3);
             $player->setContract($contract);
         }
 
@@ -179,7 +179,7 @@ class PlayerController
         }
     }
 
-    private function calcMarketvalue(Position $position, int $age, int $talent, int $ovr): int
+    private function calcMarketValue(Position $position, int $age, int $talent, int $ovr): int
     {
         $positionWeightings = [
             'QB' => 1,
@@ -218,9 +218,9 @@ class PlayerController
             $talentWeighting = 1.1 - ($talent / 10);
         }
 
-        $marketvalue = round(($ovr * $ovrWeighting * 100000) * $positionWeighting * $ageWeighting / $talentWeighting);
+        $marketValue = round(($ovr * $ovrWeighting * 100000) * $positionWeighting * $ageWeighting / $talentWeighting);
 
-        return (int)$marketvalue;
+        return (int)$marketValue;
     }
 
     public function savePlayer(Player $player): false|string
@@ -239,12 +239,12 @@ class PlayerController
         ]);
         $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
 
-        $marketvalue = $this->calcMarketvalue($player->getType()->getPosition(), $player->getAge(), $player->getTalent(), $player->getOVR());
-        $insertPlayer = 'INSERT INTO `t_player` (id, lastName, firstName, age, nationality, height, weight, marketvalue, 
+        $marketValue = $this->calcMarketValue($player->getType()->getPosition(), $player->getAge(), $player->getTalent(), $player->getOVR());
+        $insertPlayer = 'INSERT INTO `t_player` (id, lastName, firstName, age, nationality, height, weight, marketValue, 
                         energy, moral, experience, talent, skillpoints, timeInLeague, idTeam, idStatus, idCharacter, idType, idContract, idDraftposition) 
-                        VALUES (:id, :lastName, :firstName, :age, :nationality, :height, :weight, :marketvalue, :energy,
+                        VALUES (:id, :lastName, :firstName, :age, :nationality, :height, :weight, :marketValue, :energy,
                                :moral, :experience, :talent, :skillpoints, :timeInLeague, :idTeam, :idStatus, :idCharacter, :idType, :idContract, :idDraftposition) 
-                        ON DUPLICATE KEY UPDATE age = :ageW, marketvalue = :marketvalueW, energy = :energyW, moral = :moralW, experience = :experienceW, skillpoints = :skillpointsW, 
+                        ON DUPLICATE KEY UPDATE age = :ageW, marketValue = :marketValueW, energy = :energyW, moral = :moralW, experience = :experienceW, skillpoints = :skillpointsW, 
                                                 timeInLeague = :timeInLeagueW, idTeam = :idTeamW, idStatus = :idStatusW, idContract = :idContractW, idDraftposition = :idDraftpositionW;';
         $stmt = $this->pdo->prepare($insertPlayer);
         $stmt->execute([
@@ -255,7 +255,7 @@ class PlayerController
             'nationality' => $player->getNationality(),
             'height' => $player->getHeight(),
             'weight' => $player->getWeight(),
-            'marketvalue' => $marketvalue,
+            'marketValue' => $marketValue,
             'energy' => $player->getEnergy(),
             'moral' => $player->getMoral(),
             'experience' => $player->getExperience(),
@@ -269,7 +269,7 @@ class PlayerController
             'idContract' => null != $player->getContract() ? $player->getContract()->getId() : null,
             'idDraftposition' => null != $player->getDraftposition() ? $player->getDraftposition()->getId() : null,
             'ageW' => $player->getAge(),
-            'marketvalueW' => $marketvalue,
+            'marketValueW' => $marketValue,
             'energyW' => $player->getEnergy(),
             'moralW' => $player->getMoral(),
             'experienceW' => $player->getExperience(),

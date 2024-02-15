@@ -29,8 +29,8 @@ use touchdownstars\player\type\Type;
  * @method void setHeight(int $height)
  * @method int getWeight()
  * @method void setWeight(int $weight)
- * @method int getMarketvalue()
- * @method void setMarketvalue(int $marketvalue)
+ * @method int getMarketValue()
+ * @method void setMarketValue(int $marketValue)
  * @method float getEnergy()
  * @method void setEnergy(float $energy)
  * @method float getMoral()
@@ -83,7 +83,7 @@ class Player extends Helper
     private string $nationality;
     private int $height;
     private int $weight;
-    private int $marketvalue;
+    private int $marketValue;
     private float $energy;
     private float $moral = 0.8;
     private int $experience;

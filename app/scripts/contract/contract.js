@@ -36,7 +36,7 @@ function updateSalaryRange() {
     $('#lblContractMoral').text(Math.round(newMoral * 100) + ' %');
 }
 
-function calcSalaryRange(marketvalue) {
+function calcSalaryRange(marketValue) {
     let salaryCap = $('#lblSalaryCap').data('salary_cap');
     let newSalaryCap = salaryCap - (maxSalary + signingBonus);
     let step = Math.floor(maxSalary * 0.01);
@@ -70,7 +70,7 @@ function calcSalaryRange(marketvalue) {
 
     $('#slctTimeOfContract').change(function () {
         timeOfContract = $(this).children('option:selected').val();
-        signingBonus = Math.floor(marketvalue * (0.05 * timeOfContract)) * timeOfContract;
+        signingBonus = Math.floor(marketValue * (0.05 * timeOfContract)) * timeOfContract;
         let completeOffer = salary + signingBonus;
         $('#lblSigningBonus').text(currencyFormat.format(signingBonus));
         $('#lblCompleteOffer').text(currencyFormat.format(completeOffer));
@@ -87,11 +87,11 @@ function saveSalaryRange(data, signingBonus, newSalaryCap) {
     $('#lblNewSalaryCap').text(currencyFormat.format(newSalaryCap));
 }
 
-function calcStartContractValues(actualSalary, marketvalue) {
+function calcStartContractValues(actualSalary, marketValue) {
     salary = actualSalary;
     timeOfContract = $('#slctTimeOfContract option:selected').val();
-    signingBonus = Math.floor(marketvalue * (0.05 * timeOfContract)) *  timeOfContract;
+    signingBonus = Math.floor(marketValue * (0.05 * timeOfContract)) *  timeOfContract;
     $('#lblSigningBonus').text(currencyFormat.format(signingBonus));
-    maxSalary = Math.floor(marketvalue * 20 / 100);
+    maxSalary = Math.floor(marketValue * 20 / 100);
     minSalary = Math.floor(maxSalary * 0.75);
 }

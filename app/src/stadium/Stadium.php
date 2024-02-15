@@ -3,6 +3,7 @@
 
 namespace touchdownstars\stadium;
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -21,11 +22,21 @@ use Lombok\Setter;
  * @method void setBuildings(array $buildings)
  */
 #[Setter, Getter]
-class Stadium extends Helper
+class Stadium extends Helper implements JsonSerializable
 {
     private int $id;
     private string $name;
     private string $description;
     private array $buildings;
     private int $idTeam;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'buildings' => $this->getBuildings()
+        ];
+    }
 }

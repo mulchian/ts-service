@@ -35,14 +35,14 @@ if (isset($pdo, $log)) {
                     (($employee->getContract()->getEndOfContract() < 2 && $timeOfContract >= 1) ||
                         ($employee->getContract()->getEndOfContract() == 2 && $timeOfContract > 2))) {
                     // Nur wenn der Vertrag noch 1 oder 2 Saisons geht, darf der Vertrag aktualisiert werden.
-                    $employeeCost = $salary + $contractController->calcSigningBonus($employee->getMarketvalue(), $timeOfContract);
+                    $employeeCost = $salary + $contractController->calcSigningBonus($employee->getMarketValue(), $timeOfContract);
                     if ($employeeCost <= $team->getSalaryCap()) {
-                        $moral = round($salary / ($employee->getMarketvalue() * 20 / 100), 2);
+                        $moral = round($salary / ($employee->getMarketValue() * 20 / 100), 2);
                         if ($moral >= 0.75) {
                             $employee->setMoral($moral);
                             $contract = $employee->getContract();
                             $contract->setSalary($salary);
-                            $contract->setSigningBonus($contractController->calcSigningBonus($employee->getMarketvalue(), $timeOfContract));
+                            $contract->setSigningBonus($contractController->calcSigningBonus($employee->getMarketValue(), $timeOfContract));
                             $contract->setEndOfContract($timeOfContract);
                             // Speichere Employee mit der neuen Moral
                             if ($employeeController->saveEmployee($employee, $team, $contract) > 0 && $contractController->saveContract($contract) > 0) {

@@ -105,7 +105,7 @@ if (isset($pdo, $log)) :
                                         </button>
                                         <div class="tooltip-content">
                                     <span id="<?php echo 'release_tooltip_' . str_replace(' ', '', $job->getName()); ?>">
-                                        Möchtest du deinen <?php echo $employee->getJob()->getName() . ' personal.php' . $employee->getFirstName() . ' ' . $employee->getLastName() ?>
+                                        Möchtest du deinen <?php echo $employee->getJob()->getName() . ' ' . $employee->getFirstName() . ' ' . $employee->getLastName() ?>
                                         wirklich entlassen?<br>
                                         <button type="button" class="btn btn-outline-danger m-1"
                                                 onclick="releaseEmployee(this)"
@@ -195,7 +195,7 @@ if (isset($pdo, $log)) :
                                     data-sortable="true">
                                     GEHALT
                                 </th>
-                                <th data-field="marketvalue" scope="col" data-width="10" data-width-unit="%"
+                                <th data-field="marketValue" scope="col" data-width="10" data-width-unit="%"
                                     data-sortable="true">
                                     MARKTWERT
                                 </th>
