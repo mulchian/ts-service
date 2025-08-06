@@ -2,7 +2,6 @@
 
 namespace touchdownstars\user;
 
-use Cassandra\Date;
 use DateTime;
 use DateTimeZone;
 use JsonSerializable;

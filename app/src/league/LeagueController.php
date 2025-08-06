@@ -4,7 +4,6 @@
 namespace touchdownstars\league;
 
 
-use Cassandra\Date;
 use DateTime;
 use PDO;
 use Monolog\Logger;

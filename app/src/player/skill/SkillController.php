@@ -244,6 +244,7 @@ class SkillController
     {
         $skillsToPlayer = $this->getSkillsToPlayer($player);
 
+        /** @noinspection SqlInsertValues */
         $insertSkills = 'INSERT INTO `t_skill_to_player` (' . implode(', ', array_keys($skillsToPlayer)) . ') SELECT ';
         // Reserved Words must be quoted with `` for MYSQL -> returning, release
         $insertSkills = str_replace('returning', '`returning`', $insertSkills);
@@ -301,6 +302,7 @@ class SkillController
      */
     public function setTrainingGroup(Team $team, string $trainingGroup, string $idPlayer = null): bool
     {
+        /** @noinspection SqlWithoutWhere */
         $updateTrainingGroup = 'UPDATE `t_player` SET trainingGroup = :trainingGroup ';
         if (isset($idPlayer)) {
             $updateTrainingGroup .= 'WHERE id = :idPlayer;';
@@ -335,6 +337,7 @@ class SkillController
 
     public function setIntensity(Team $team, string $newIntensity, string $idPlayer = null): bool
     {
+        /** @noinspection SqlWithoutWhere */
         $updateIntensity = 'UPDATE `t_player` SET intensity = :intensity ';
         if (isset($idPlayer)) {
             $updateIntensity .= 'WHERE id = :idPlayer;';
