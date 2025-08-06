@@ -138,7 +138,7 @@ if (isset($pdo, $log)) :
                                     <?php foreach ($allFriendlies as $friendly): ?>
                                         <tr>
                                             <td><?php echo $friendly['id']; ?></td>
-                                            <td><?php echo date('d.m.Y H:i', $friendly['gameTime']); ?></td>
+                                            <td><?php echo (new DateTime($friendly['gameTime']))->format('d.m.Y H:i'); ?></td>
                                             <td><?php echo $friendly['home']; ?></td>
                                             <td><?php echo $friendly['away']; ?></td>
                                             <td><?php
@@ -152,9 +152,15 @@ if (isset($pdo, $log)) :
                                                 echo $accepted . '/2';
                                                 ?></td>
                                             <td>
-                                                <?php if ((($friendly['home'] == $selfTeam->getName() && $friendly['homeAccepted']) ||
+                                                <?php
+                                                $gameTime = (new DateTime($friendly['gameTime']))->modify('-1 hour');
+                                                $nowInOneHour = (new DateTime('now'))->modify('+1 hour');
+                                                $nowInOneHour = $nowInOneHour->setTime($nowInOneHour->format('H'), 0);
+                                                $log->debug('Game time: ' . $gameTime->format('Y-m-d H:i:s'));
+                                                $log->debug('Now in one hour: ' . $nowInOneHour->format('Y-m-d H:i:s'));
+                                                if ((($friendly['home'] == $selfTeam->getName() && $friendly['homeAccepted']) ||
                                                         ($friendly['away'] == $selfTeam->getName() && $friendly['awayAccepted'])) &&
-                                                    ($friendly['gameTime'] - (60 * 20) > strtotime(date("H:00", strtotime(" +1 hour "))))): ?>
+                                                    ($gameTime > $nowInOneHour)): ?>
                                                     <button type="button"
                                                             class="btn btn-outline-danger tooltip-custom-interactive"
                                                             id="btnDeclineFriendly<?php echo $friendly['id']; ?>"

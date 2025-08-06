@@ -125,6 +125,7 @@ class SkillController
     {
         $playerController = new PlayerController($this->pdo, $this->log);
         $employeeController = new EmployeeController($this->pdo, $this->log);
+        $stadiumController = new StadiumController($this->pdo);
         $players = $team->getPlayers();
 
         $trainingGroupPlayers = array_filter($players, function (Player $value) use ($trainingGroup) {
@@ -142,7 +143,7 @@ class SkillController
 
                 //Head Coach für alle
                 $headCoach = $employeeController->fetchEmployeeOfTeam($team, 'Head Coach');
-                if (isset($headCoach) && !empty($headCoach)) {
+                if (!empty($headCoach)) {
                     $headCoachFactor = $headCoach->getOvr();
                 } else {
                     $headCoachFactor = 0;
@@ -153,57 +154,76 @@ class SkillController
                 switch ($player->getType()->getAssignedTeamPart()) {
                     case 'Offense':
                         $offensiveCoordinator = $employeeController->fetchEmployeeOfTeam($team, 'Offensive Coordinator');
-                        if (isset($offensiveCoordinator) && !empty($offensiveCoordinator)) {
+                        if (!empty($offensiveCoordinator)) {
                             $coordinatorFactor = $offensiveCoordinator->getOvr();
                         }
                         break;
                     case 'Defense':
                         $defensiveCoordinator = $employeeController->fetchEmployeeOfTeam($team, 'Defensive Coordinator');
-                        if (isset($defensiveCoordinator) && !empty($defensiveCoordinator)) {
+                        if (!empty($defensiveCoordinator)) {
                             $coordinatorFactor = $defensiveCoordinator->getOvr();
                         }
                         break;
                     case 'Special Teams':
                         $specialTeamsCoach = $employeeController->fetchEmployeeOfTeam($team, 'Special Teams Coach');
-                        if (isset($specialTeamsCoach) && !empty($specialTeamsCoach)) {
+                        if (!empty($specialTeamsCoach)) {
                             $coordinatorFactor = $specialTeamsCoach->getOvr();
                         }
                         break;
                 }
 
                 //Trainingszentrum
-                $stadiumController = new StadiumController($this->pdo);
                 $trainingCenter = $stadiumController->getBuildingWithName($team->getStadium(), 'Trainingszentrum');
-                if (isset($trainingCenter) && !empty($trainingCenter)) {
+                if (!empty($trainingCenter)) {
                     $trainingCenterFactor = $trainingCenter->getLevel() * 10;
                 } else {
                     $trainingCenterFactor = 0;
                 }
 
-                $trainFactor = $this->trainFactors[$training] * $intensityFactor * ($ovrFactor + $talentFactor + $ageFactor
-                        + $experienceFactor + $trainAbilityFactor + $headCoachFactor + $coordinatorFactor + $trainingCenterFactor);
+                $this->log->debug('training factors:', [
+                    'ovrFactor' => $ovrFactor,
+                    'talentFactor' => $talentFactor,
+                    'ageFactor' => $ageFactor,
+                    'experienceFactor' => $experienceFactor,
+                    'trainAbilityFactor' => $trainAbilityFactor,
+                    'headCoachFactor' => $headCoachFactor,
+                    'coordinatorFactor' => $coordinatorFactor,
+                    'trainingCenterFactor' => $trainingCenterFactor
+                ]);
+                $addableFactors = ($ovrFactor + $talentFactor + $ageFactor + $experienceFactor + $trainAbilityFactor + $headCoachFactor + $coordinatorFactor + $trainingCenterFactor);
+                $this->log->debug('addableFactors', ['addableFactors' => $addableFactors]);
+                $this->log->debug('intensityFactor', ['intensityFactor' => $intensityFactor]);
+                $this->log->debug('trainingPart trainFactor', ['trainingPart' => $training, 'trainFactor' => $this->trainFactors[$training]]);
+                $trainFactor = $this->trainFactors[$training] * $intensityFactor * $addableFactors;
                 $playerSkills = $player->getSkills();
 
-                foreach (array_keys($playerSkills) as $skillName) {
-                    switch ($training) {
-                        case 'fitness':
-                            //Training Fitness
-                            if (in_array($skillName, self::$fitnessSkills)) {
-                                $playerSkills[$skillName] += ($trainFactor / 10000);
-                            }
-                            break;
-                        case 'technique':
-                            //Training Technique
-                            if (!in_array($skillName, self::$fitnessSkills)) {
-                                $playerSkills[$skillName] += ($trainFactor / 10000);
-                            }
-                            break;
-                        case 'scrimmage':
-                            //Training Scrimmage
-                            //Scrimmage skillt den SP -> 10000 = 1 SP
-                            $player->setSkillpoints($player->getSkillpoints() + ($trainFactor / 10000));
-                            $playerController->updateSkillPoints($player);
-                            break;
+                if ($training === 'scrimmage') {
+                    //Training Scrimmage
+                    //Scrimmage skillt den SP -> 10000 = 1 SP
+                    $this->log->debug('scrimmage training for player', ['playerId' => $player->getId(), 'trainFactor' => $trainFactor]);
+                    $trainingEffect = round(($trainFactor / 10000), 4);
+                    $this->log->debug('trainingEffect', ['trainingEffect' => $trainingEffect]);
+                    $newSp = max(round(($player->getSkillpoints() + $trainingEffect), 4), 0);
+                    $this->log->debug('newSp', ['newSp' => $newSp]);
+                    $player->setSkillpoints($newSp);
+                    $playerController->updateSkillPoints($player);
+                } else {
+                    $this->log->debug($training . ' training for player', ['playerId' => $player->getId(), 'trainFactor' => $trainFactor]);
+                    foreach (array_keys($playerSkills) as $skillName) {
+                        switch ($training) {
+                            case 'fitness':
+                                //Training Fitness
+                                if (in_array($skillName, self::$fitnessSkills)) {
+                                    $playerSkills[$skillName] += round(($trainFactor / 10000), 4);
+                                }
+                                break;
+                            case 'technique':
+                                //Training Technique
+                                if (!in_array($skillName, self::$fitnessSkills)) {
+                                    $playerSkills[$skillName] += round(($trainFactor / 10000), 4);
+                                }
+                                break;
+                        }
                     }
                 }
 
@@ -216,7 +236,6 @@ class SkillController
             return true;
         } else {
             //mindestens ein Spieler hat bereits drei Trainings
-            //Fehlermeldung anzeigen
             return false;
         }
     }

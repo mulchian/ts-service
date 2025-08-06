@@ -94,11 +94,13 @@ function initializeCoaching() {
             console.log(data);
             if (data && data.coachings) {
                 data.coachings.forEach(function (item) {
-                    if (item.teamPart !== 'General') {
+                    if (item.teamPart !== 'general') {
                         let rangeInstance = $('#rng' + item.down + item.playrange).data('ionRangeSlider');
-                        rangeInstance.update({
-                            from: item.rating
-                        });
+                        if (rangeInstance) {
+                            rangeInstance.update({
+                                from: item.rating
+                            });
+                        }
                     }
                 });
             }
@@ -122,7 +124,7 @@ function changeTeamPart(teamPart, button) {
     let colGPOff = $('#colGameplanOff');
     let colGPDef = $('#colGameplanDef');
     switch (teamPart) {
-        case 'Offense':
+        case 'offense':
             changeVisibility(rowDef, rowOff);
             changeVisibility(colGPDef, colGPOff);
             break;
@@ -147,7 +149,7 @@ function saveGameplanName() {
         slGameplan,
         teamPart = $('#btnGrpTeamPart').find('.active').val(),
         gameplanName = $('#inputGameplan').val();
-    if (teamPart.includes('Offense')) {
+    if (teamPart.includes('offense')) {
         slGameplan = $('#slGameplanOff');
     } else {
         slGameplan = $('#slGameplanDef');
@@ -229,7 +231,7 @@ function saveCoaching(elemName, dataFrom) {
     let playrange = elemName.substring(3);
 
     let gameplanNr, cbOption1, cbOption2;
-    if (teamPart === 'Offense') {
+    if (teamPart === 'offense') {
         gameplanNr = $('#slGameplanOff').children('option:selected').val();
         cbOption1 = $('#cbL' + elemName).prop('checked') ? 'Run' : 'Pass';
         cbOption2 = $('#cbR' + elemName).prop('checked') ? 'Run' : 'Pass';
@@ -261,12 +263,12 @@ function saveCoaching(elemName, dataFrom) {
         success: function (data) {
             console.log(data);
             if (data && data.coachingSaved) {
-                $('#row' + down + teamPart.substring(0, 3)).show().load(AJAX_COACHING_URL + 'getCoachingRow.php', {
+                $('#row' + down + teamPart.charAt(0).toUpperCase() + teamPart.substring(1, 3)).show().load(AJAX_COACHING_URL + 'getCoachingRow.php', {
                     gameplanNr: gameplanNr,
                     down: down,
                     teamPart: teamPart
                 }, function () {
-                    if (teamPart === 'Offense') {
+                    if (teamPart === 'offense') {
                         ['Long', 'Middle', 'Short'].forEach(function (elem) {
                             $('#cbL' + down + elem).bootstrapToggle();
                             $('#cbR' + down + elem).bootstrapToggle();
@@ -289,8 +291,8 @@ function saveCoaching(elemName, dataFrom) {
 
 function saveGeneralCoaching() {
     let gameplanNr = $('#slGameplanOff').children('option:selected').val();
-    let teamPart = 'General';
-    let playrange = teamPart;
+    let teamPart = 'general';
+    let playrange = 'General';
 
     let fgRange = $('#inputFGRange').children('option:selected').val();
     let twoPtCon = $('#input2PtCon').children('option:selected').val();

@@ -24,7 +24,7 @@ if (isset($pdo) && isset($log)) {
         if (isset($input['home'], $input['opponent'], $input['gameTime'])) {
             $isHome = filter_var($input['home'], FILTER_VALIDATE_BOOLEAN);
             $opponent = $input['opponent'];
-            $gameTime = $input['gameTime'];
+            $gameTime = new DateTime($input['gameTime']);
 
             if ($isHome) {
                 $home = $team->getName();
@@ -43,20 +43,20 @@ if (isset($pdo) && isset($log)) {
             $log->debug('Now in 2 hours: ' . print_r($timeInTwoHours, true));
 
             // Spielzeit muss mindestens 2 Stunden in der Zukunft liegen
-            $timeIsInFuture = $gameTime >= $timeInTwoHours->getTimestamp();
+            $timeIsInFuture = $gameTime >= $timeInTwoHours;
             // Spielzeit darf maximal bis zu 1 Stunde vor einem Ligaspiel sein und mindestens 2 Stunden nach Ligaspielstart
             $timeHasLeagueGame = $leagueController->hasGameAtGivenTime($team, $gameTime);
             $log->debug('Ist bereits ein Siel geplant? : ' . ($timeHasLeagueGame ? 'Ja' : 'Nein'));
 
             if ($timeIsInFuture && !$timeHasLeagueGame) {
 
-                $mainArray = $mainController->fetchSeasonAndGameday();
-                $season = $mainArray['season'];
-                if ($gameTime > $mainArray['lastSeasonday']) {
+                $main = $mainController->fetchSeasonAndGameday();
+                $season = $main->getSeason();
+                if ($gameTime > $main->getLastSeasonday()) {
                     $season++;
                 }
 
-                $log->debug('Speichere Freundschaftsspiel um ' . date('d.m.Y H:i', $gameTime) . ' | Heim: ' . $home . ' | Gast: ' . $away);
+                $log->debug('Speichere Freundschaftsspiel um ' . $gameTime->format('d.m.Y H:i') . ' | Heim: ' . $home . ' | Gast: ' . $away);
 
                 $id = $leagueController->saveFriendly($gameTime, $season, $home, $away, $homeAccepted ?? false, $awayAccepted ?? false);
 

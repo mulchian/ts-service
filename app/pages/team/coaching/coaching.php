@@ -1,6 +1,6 @@
 <?php
 
-use touchdownstars\coaching\Coachingname;
+use touchdownstars\coaching\CoachingName;
 use touchdownstars\team\TeamController;
 
 if (isset($pdo, $log)) :
@@ -11,16 +11,16 @@ if (isset($pdo, $log)) :
         $gameplanOff = $team->getGameplanOff();
         $gameplanDef = $team->getGameplanDef();
 
-        $coachingNames = $team->getCoachingnames();
+        $coachingNames = $team->getCoachingNames();
         ?>
         <div class="panel panel-default opacity">
             <div class="row mb-4">
                 <div class="col-2 col-sm-3 align-self-start">
                     <div id="btnGrpTeamPart" class="btn-group" role="group">
-                        <button id="btnOffense" type="button" class="btn btn-dark active" value="Offense" onclick="changeTeamPart('Offense', this)">
+                        <button id="btnOffense" type="button" class="btn btn-dark active" value="offense" onclick="changeTeamPart('offense', this)">
                             Offensive
                         </button>
-                        <button id="btnDefense" type="button" class="btn btn-dark" value="Defense" onclick="changeTeamPart('Defense', this)">
+                        <button id="btnDefense" type="button" class="btn btn-dark" value="defense" onclick="changeTeamPart('defense', this)">
                             Defensive
                         </button>
                     </div>
@@ -31,7 +31,7 @@ if (isset($pdo, $log)) :
                             <label class="input-group-text" for="slGameplanOff">Offense Gameplan</label>
                         </div>
                         <select id="slGameplanOff" class="custom-select" onchange="saveGameplan(this)">
-                            <?php showGameplanSelectOptions($coachingNames, 'Offense', $gameplanOff); ?>
+                            <?php showGameplanSelectOptions($coachingNames, 'offense', $gameplanOff); ?>
                         </select>
                         <div class="input-group-append">
                             <button id="btnChangeNameGPOff" type="button" class="btn btn-dark tooltip-gameplan">
@@ -46,7 +46,7 @@ if (isset($pdo, $log)) :
                             <label class="input-group-text" for="slGameplanDef">Defense Gameplan</label>
                         </div>
                         <select id="slGameplanDef" class="custom-select" onchange="saveGameplan(this)">
-                            <?php showGameplanSelectOptions($coachingNames, 'Defense', $gameplanDef); ?>
+                            <?php showGameplanSelectOptions($coachingNames, 'defense', $gameplanDef); ?>
                         </select>
                         <div class="input-group-append">
                             <button id="btnChangeNameGPDef" type="button" class="btn btn-dark tooltip-gameplan">
@@ -60,13 +60,13 @@ if (isset($pdo, $log)) :
                 <div id="colGeneral" class="col-3">
                     <?php
                     $gameplanNr = $gameplanOff;
-                    $teamPart = 'General';
+                    $teamPart = 'general';
                     $down = '1st';
                     include('coachingRow.php'); ?>
                 </div>
                 <div class="col-9">
                     <?php
-                    $teamPart = 'Offense';
+                    $teamPart = 'offense';
                     $down = '1st'; ?>
                     <div id="row<?php echo $down; ?>Off" class="row mb-4">
                         <?php include('coachingRow.php'); ?>
@@ -89,7 +89,7 @@ if (isset($pdo, $log)) :
                 <div class="col-6">
                     <?php
                     $gameplanNr = $gameplanDef;
-                    $teamPart = 'Defense';
+                    $teamPart = 'defense';
                     $down = '1st'; ?>
                     <div id="row<?php echo $down; ?>Def" class="row mb-4 justify-content-center">
                         <?php include('coachingRow.php'); ?>
@@ -122,14 +122,14 @@ endif;
 function showGameplanSelectOptions(?array $coachingNames, string $teamPart, int $mainGameplanNr) {
     for ($i = 1; $i <= 5; $i++) {
         if (isset($coachingNames)) {
-            $coachingname = array_filter($coachingNames, function (Coachingname $name) use ($i, $teamPart) {
+            $coachingname = array_filter($coachingNames, function (CoachingName $name) use ($i, $teamPart) {
                 return $name->getGameplanNr() == $i && $name->getTeamPart() == $teamPart;
             })[0];
         } else {
             $coachingname = null;
         }
         echo '<option ' . ($mainGameplanNr == $i ? 'selected' : '') . ' value="' . $i . '">';
-        echo (isset($coachingname) && $coachingname->getGameplanNr() == $i ? $coachingname->getGameplanName() : ('Gameplan ' . $i));
+        echo (isset($coachingname) && $coachingname->getGameplanNr() == $i ? $coachingname->getName() : ('Gameplan ' . $i));
         echo '</option>';
     }
 }

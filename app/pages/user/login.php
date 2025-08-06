@@ -22,9 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $teamController = new TeamController($pdo, $log);
             $team = $teamController->fetchTeam($user->getId());
             if ($team) {
-                $log->debug('Last-Active-Date: ' . date('Ymd', $user->getLastActiveTime()));
-                $log->debug('Yesterday-Date: ' . date('Ymd', strtotime('yesterday')));
-                if (date('Ymd', $user->getLastActiveTime()) <= date('Ymd', strtotime('yesterday'))) {
+                $yesterday = (new DateTime('yesterday'))->setTime(0, 0);
+                $log->debug('Last-Active-Date: ' . $user->getLastActiveTime()->format('c'));
+                $log->debug('Yesterday-Date: ' . $yesterday->format('c'));
+                if ($user->getLastActiveTime() <= $yesterday) {
                     $log->debug('reset Trainings');
                     $playerController = new PlayerController($pdo, $log);
                     foreach ($team->getPlayers() as $player) {
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
 
-            $user->setLastActiveTime(time());
+            $user->setLastActiveTime(new DateTime('now'));
             $user->setStatus('online');
             $log->debug('User: ' . print_r($user, true));
             $userController->saveUser($user);

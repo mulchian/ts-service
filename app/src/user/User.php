@@ -2,6 +2,9 @@
 
 namespace touchdownstars\user;
 
+use Cassandra\Date;
+use DateTime;
+use DateTimeZone;
 use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
@@ -24,12 +27,12 @@ use Lombok\Setter;
  * @method void setCity(string $city)
  * @method string getGender()
  * @method void setGender(string $gender)
- * @method string getBirthday()
- * @method void setBirthday(string $birthday)
- * @method string getRegisterDate()
- * @method void setRegisterDate(string $registerDate)
- * @method int getLastActiveTime()
- * @method void setLastActiveTime(string $lastActiveTime)
+ * @method DateTime getBirthday()
+ * @method void setBirthday(DateTime $birthday)
+ * @method DateTime getRegisterDate()
+ * @method void setRegisterDate(DateTime $registerDate)
+ * @method DateTime getLastActiveTime()
+ * @method void setLastActiveTime(DateTime $lastActiveTime)
  * @method string getStatus()
  * @method void setStatus(string $status)
  * @method bool isAdmin()
@@ -53,15 +56,28 @@ class User extends Helper implements JsonSerializable
     private ?string $realname;
     private ?string $city;
     private string $gender;
-    private ?string $birthday;
-    private ?string $registerDate;
-    private int $lastActiveTime;
+    private ?DateTime $birthday;
+    private DateTime $registerDate;
+    private ?DateTime $lastActiveTime;
     private string $status;
     private bool $admin = false;
     private bool $deactivated = false;
     private bool $activationSent = false;
     private bool $activated = false;
     private array $profilePicture = array();
+
+    public function __set(string $name, $value): void
+    {
+        if ($name == 'registerDateString') {
+            $this->setRegisterDate(new DateTime($value, new DateTimeZone('Europe/Berlin')));
+        } elseif ($name == 'lastActiveTimeString' && !empty($value)) {
+            $this->setLastActiveTime(new DateTime($value, new DateTimeZone('Europe/Berlin')));
+        } else if ($name == 'birthdayString' && !empty($value)) {
+            $this->setBirthday(new DateTime($value, new DateTimeZone('Europe/Berlin')));
+        } else {
+            $this->$name = $value;
+        }
+    }
 
     public function jsonSerialize(): array
     {

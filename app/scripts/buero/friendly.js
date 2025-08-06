@@ -28,15 +28,15 @@ async function inviteForFriendly() {
     let isHome = $('#cbIsHome').prop("checked");
     let dateTime = $('#datetime').val();
 
-    let gameTime = moment(dateTime, "DD.MM.YYYY HH:mm").unix();
+    let gameTime = moment(dateTime, "DD-MM-YYYY HH:mm");
 
-    if (gameTime >= moment().add(2, 'hours').minutes(0).seconds(0).unix()) {
-        const response = await fetch(AJAX_EVENT_URL + 'checkFriendly.php', {
+    if (gameTime.format('YYYY-MM-DD HH:mm') >= moment().add(2, 'hours').minutes(0).seconds(0).format('YYYY-MM-DD HH:mm')) {
+        const response = await fetch(AJAX_EVENT_URL + 'addFriendly.php', {
             method: 'POST',
             body: JSON.stringify({
                 home: isHome,
                 opponent: opponent,
-                gameTime: gameTime
+                gameTime: gameTime.format('YYYY-MM-DD HH:mm:ss')
             })
         });
         const data = await response.json();
@@ -47,7 +47,7 @@ async function inviteForFriendly() {
                 // Table is there - add the element
                 let friendlyRow = [{
                     id: data.id,
-                    gameTime: moment.unix(data.gameTime).format('DD.MM.YYYY HH:mm'),
+                    gameTime: moment(data.gameTime, 'YYYY-MM-DD HH:MM:SS').format('DD.MM.YYYY HH:mm'),
                     home: data.home,
                     away: data.away,
                     accepted: data.accepted,

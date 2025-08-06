@@ -19,9 +19,10 @@ if (isset($pdo, $log)) {
     $log->debug('found ' . count($liveGames) . ' live games');
 
     foreach ($liveGames as $liveGame) {
-        $log->debug('game calculation starts for ' . $liveGame['home'] . ' vs ' . $liveGame['away'] . ' from ' . date('d.m.Y H:i', $liveGame['gameTime']) . ' at ' . date('d.m.Y H:i:s'));
-        $gameController->getOrCalcLastGameplayResult(time(), $liveGame);
-        $log->debug('game calculation ends at ' . date('d.m.Y H:i:s'));
+        $log->debug('game calculation starts for ' . $liveGame['home'] . ' vs ' . $liveGame['away'] . ' from ' .
+            $liveGame['gameTime']->format('Y.m.d H:i:s') . ' at ' . date('Y.m.d H:i:s'));
+        $gameController->getOrCalcLastGameplayResult(new DateTime('now'), $liveGame);
+        $log->debug('game calculation ends at ' . date('Y.m.d H:i:s'));
     }
 
     $log->debug('cron ends at ' . date('Y-m-d H:i:s'));

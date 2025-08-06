@@ -23,10 +23,10 @@ if (isset($pdo) && isset($log)) {
         $changeSides = false;
         $content = trim(file_get_contents("php://input"));
         $input = json_decode($content, true);
-        $gameTime = $input['gameTime'];
+        $gameTime = new DateTime($input['gameTime']);
 
         if (isset($_SESSION['season'], $_SESSION['gameday'], $gameTime)) {
-            $log->debug('gameTime: ' . $gameTime);
+            $log->debug('gameTime: ' . $gameTime->format('c'));
 
             $game = $gameController->getGame($team);
             $log->debug('Game: ' . print_r($game, true));
@@ -70,7 +70,7 @@ if (isset($pdo) && isset($log)) {
         if (isset($_POST['gameId'])) {
             $game = $gameController->getGameById($_POST['gameId']);
 
-            $gameplay = $gameController->getOrCalcLastGameplayResult(time(), $game);
+            $gameplay = $gameController->getOrCalcLastGameplayResult(new DateTime('now'), $game);
             $data['recalculationFinished'] = $gameplay['isEnd'] ?? false;
 
             $standings = $leagueController->getStandings($game);

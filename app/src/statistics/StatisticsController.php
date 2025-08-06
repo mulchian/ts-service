@@ -64,7 +64,7 @@ class StatisticsController
         } else {
             $mainController = new MainController($this->pdo, $this->log);
             $seasonAndGameday = $mainController->fetchSeasonAndGameday();
-            $season = $seasonAndGameday['season'];
+            $season = $seasonAndGameday->getSeason();
         }
         return $season;
     }

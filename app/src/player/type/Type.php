@@ -3,6 +3,7 @@
 namespace touchdownstars\player\type;
 
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -30,7 +31,7 @@ use touchdownstars\player\position\Position;
  * @method void setAssignedTeamPart(string $assignedTeamPart)
  */
 #[Setter, Getter]
-class Type extends Helper
+class Type extends Helper implements JsonSerializable
 {
     private int $id;
     private Position $position;
@@ -44,13 +45,27 @@ class Type extends Helper
     public function __construct(int $id, Position $position, string $description, int $minHeight, int $maxHeight, int $minWeight, int $maxWeight, string $assignedTeamPart)
     {
         parent::__construct();
-        $this->id = $id;
-        $this->position = $position;
-        $this->description = $description;
-        $this->minHeight = $minHeight;
-        $this->maxHeight = $maxHeight;
-        $this->minWeight = $minWeight;
-        $this->maxWeight = $maxWeight;
-        $this->assignedTeamPart = $assignedTeamPart;
+        $this->setId($id);
+        $this->setPosition($position);
+        $this->setDescription($description);
+        $this->setMinHeight($minHeight);
+        $this->setMaxHeight($maxHeight);
+        $this->setMinWeight($minWeight);
+        $this->setMaxWeight($maxWeight);
+        $this->setAssignedTeamPart($assignedTeamPart);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'position' => $this->getPosition(),
+            'description' => $this->getDescription(),
+            'minHeight' => $this->getMinHeight(),
+            'maxHeight' => $this->getMaxHeight(),
+            'minWeight' => $this->getMinWeight(),
+            'maxWeight' => $this->getMaxWeight(),
+            'assignedTeamPart' => $this->getAssignedTeamPart()
+        ];
     }
 }

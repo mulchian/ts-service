@@ -32,6 +32,8 @@ use touchdownstars\user\User;
  * @method void setCredits(int $credits)
  * @method int getChemie()
  * @method void setChemie(int $chemie)
+ * @method int getGameplanGeneral()
+ * @method void setGameplanGeneral(int $gameplanGeneral)
  * @method int getGameplanOff()
  * @method void setGameplanOff(int $gameplanOff)
  * @method int getGameplanDef()
@@ -42,6 +44,8 @@ use touchdownstars\user\User;
  * @method void setLineupDef(string $lineupDef)
  * @method Fanbase getFanbase()
  * @method void setFanbase(Fanbase $fanbase)
+ * @method int getIdUser()
+ * @method void setIdUser(int $idUser)
  * @method User getUser()
  * @method void setUser(User $user)
  * @method Stadium getStadium()
@@ -58,8 +62,8 @@ use touchdownstars\user\User;
  * @method void setDivision(Division $division)
  * @method array getCoachings()
  * @method void setCoachings(array $coachings)
- * @method array getCoachingnames()
- * @method void setCoachingnames(array $coachingnames)
+ * @method array getCoachingNames()
+ * @method void setCoachingNames(array $coachingNames)
  * @method array getTeamPicture()
  * @method void setTeamPicture(array $teamPicture)
  * @method array getStatistics()
@@ -76,6 +80,7 @@ class Team extends Helper implements JsonSerializable
     private int $salaryCap;
     private int $credits;
     private int $chemie;
+    private int $gameplanGeneral;
     private int $gameplanOff;
     private int $gameplanDef;
     private string $lineupOff;
@@ -95,7 +100,7 @@ class Team extends Helper implements JsonSerializable
     private int $idDivision;
     private Division $division;
     private array $coachings;
-    private ?array $coachingnames = null;
+    private ?array $coachingNames = null;
     private ?array $teamPicture = null;
     /**
      * @var array $statistics - class StatisticsTeam with the statistics of the team
@@ -127,6 +132,7 @@ class Team extends Helper implements JsonSerializable
             'salaryCap' => $this->getSalaryCap(),
             'credits' => $this->getCredits(),
             'chemie' => $this->getChemie(),
+            'gameplanGeneral' => $this->getGameplanGeneral(),
             'gameplanOff' => $this->getGameplanOff(),
             'gameplanDef' => $this->getGameplanDef(),
             'lineupOff' => $this->getLineupOff(),
@@ -140,7 +146,7 @@ class Team extends Helper implements JsonSerializable
             'conference' => $this->getConference(),
             'division' => $this->getDivision(),
             'coachings' => $this->getCoachings(),
-            'coachingnames' => $this->getCoachingnames(),
+            'coachingNames' => $this->getCoachingNames(),
             'teamPicture' => $this->getTeamPicture(),
             'statistics' => $this->getStatistics(),
             'ovr' => $this->getOVR()

@@ -5,7 +5,7 @@ use touchdownstars\team\TeamController;
 
 $logFile = 'employee';
 include($_SERVER['DOCUMENT_ROOT'] . '/init.php');
-include('../team/util.php');
+include('../util/util.php');
 
 session_start();
 

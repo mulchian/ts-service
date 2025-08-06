@@ -6,7 +6,7 @@ function getPlayerInfo(array $players, string $position, string $lineupPosition,
 {
     $btnChange = '<button type="button" class="btn btn-secondary mt-2" ' .
         'data-toggle="modal" data-target="#lineupModal" ' .
-        'data-position="' . $position . '" data-lineup_position="' . ((strpos($lineupPosition, 'RB') !== false || strpos($lineupPosition, 'MLB') !== false) ? substr($lineupPosition, 0, -1) : $lineupPosition) . '">' .
+        'data-position="' . $position . '" data-lineup_position="' . ((str_contains($lineupPosition, 'RB') || str_contains($lineupPosition, 'MLB')) ? substr($lineupPosition, 0, -1) : $lineupPosition) . '">' .
         'ÄNDERN' .
         '</button>';
 

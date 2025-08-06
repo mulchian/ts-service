@@ -92,7 +92,7 @@ if (isset($pdo, $log)) {
 
         if (!empty($errorMsg)) {
             $log->warning('releaseEmployee: ' . $errorMsg);
-            $data['errorMessage'] = $errorMsg;
+            $data['error'] = $errorMsg;
         }
         $data['isReleased'] = $isReleased;
         if (!empty($data)) {

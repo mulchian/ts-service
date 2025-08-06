@@ -4,6 +4,7 @@
 namespace touchdownstars\player\character;
 
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 
@@ -15,8 +16,16 @@ use Lombok\Helper;
  * @method string getDescription()
  */
 #[Getter]
-class Character extends Helper
+class Character extends Helper implements JsonSerializable
 {
     private int $id;
     private string $description;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'description' => $this->getDescription()
+        ];
+    }
 }

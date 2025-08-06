@@ -28,7 +28,7 @@ if (isset($pdo) && isset($log)) {
             $away = $input['away'];
 
             $log->debug('Anpfiff: ' . print_r($gameTime, true));
-            $data['isDeclined'] = $leagueController->declineFriendly($id, $gameTime, $home, $away);;
+            $data['isDeclined'] = $leagueController->declineFriendly($id, $gameTime, $home, $away);
         }
 
         if (!empty($data)) {

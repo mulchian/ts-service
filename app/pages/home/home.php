@@ -4,7 +4,7 @@ if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
 }
 
-$todayDate = new DateTime();
+$todayDate = new DateTime('now');
 $today = $todayDate->format('l');
 
 ?>
@@ -40,7 +40,7 @@ $today = $todayDate->format('l');
                     </div>
                     <div class="panel-body">
                         Deine E-Mail-Adresse ist: <?php echo $user->getEmail(); ?><br>
-                        Du hast dich am <?php echo date('d.m.Y H:i:s', strtotime($user->getRegisterDate())); ?> registriert.
+                        Du hast dich am <?php echo $user->getRegisterDate()->format('d.m.Y H:i:s'); ?> registriert.
                     </div>
                 </div>
             </div>

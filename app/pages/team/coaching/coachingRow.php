@@ -2,7 +2,7 @@
 
 use touchdownstars\coaching\CoachingController;
 
-if (!isset($team) && isset($_SESSION['team']) && !empty($_SESSION['team'])) {
+if (!isset($team) && !empty($_SESSION['team'])) {
     $team = $_SESSION['team'];
 }
 
@@ -14,7 +14,7 @@ if (isset($pdo, $log) && isset($team) && isset($gameplanNr) && isset($down) && i
         $team->setCoachings($coachings);
     }
 
-    if ($teamPart == 'Offense') :
+    if ($teamPart == 'offense') :
         $coachingShort = $coachingController->getCoachingFromTeam($team, $gameplanNr, $teamPart, $down, 'Short');
         $coachingMiddle = $coachingController->getCoachingFromTeam($team, $gameplanNr, $teamPart, $down, 'Middle');
         $coachingLong = $coachingController->getCoachingFromTeam($team, $gameplanNr, $teamPart, $down, 'Long');
@@ -126,7 +126,7 @@ if (isset($pdo, $log) && isset($team) && isset($gameplanNr) && isset($down) && i
             </div>
         </div>
     <?php
-    elseif ($teamPart == 'Defense'):
+    elseif ($teamPart == 'defense'):
         $coachingRun = $coachingController->getCoachingFromTeam($team, $gameplanNr, $teamPart, $down, 'Run');
         $coachingPass = $coachingController->getCoachingFromTeam($team, $gameplanNr, $teamPart, $down, 'Pass');
         ?>
@@ -191,7 +191,7 @@ if (isset($pdo, $log) && isset($team) && isset($gameplanNr) && isset($down) && i
             </div>
         </div>
     <?php
-    elseif ($teamPart == 'General'):
+    elseif ($teamPart == 'general'):
         $general1 = $coachingController->getGeneralCoachingFromTeam($team, $gameplanNr, '1st');
         $general2 = $coachingController->getGeneralCoachingFromTeam($team, $gameplanNr, '2nd');
         ?>

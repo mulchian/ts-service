@@ -54,12 +54,12 @@ class CoachingController
         return $stmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\coaching\\Coaching');
     }
 
-    public function fetchAllCoachingnames(int $idTeam): array
+    public function fetchAllCoachingNames(int $idTeam): array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM `t_coachingname` WHERE idTeam = :idTeam;');
         $stmt->execute(['idTeam' => $idTeam]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\coaching\\Coachingname');
-        return $stmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\coaching\\Coachingname');
+        $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\coaching\\CoachingName');
+        return $stmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\coaching\\CoachingName');
     }
 
     /**
@@ -74,7 +74,10 @@ class CoachingController
     {
         $selectStmt = $this->pdo->prepare('SELECT id from `t_coaching` where idTeam = :idTeam and gameplanNr = :gameplanNr and teamPart = :teamPart and down = :down and playrange = :playrange;');
         $selectStmt->execute(['idTeam' => $team->getId(), 'gameplanNr' => $coaching->getGameplanNr(), 'teamPart' => $coaching->getTeamPart(), 'down' => $coaching->getDown(), 'playrange' => $coaching->getPlayrange()]);
-        $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
+        $selectedIdColumn = $selectStmt->fetchColumn();
+        if ($selectedIdColumn) {
+            $id = $selectedIdColumn;
+        }
 
         $saveCoaching = 'INSERT INTO `t_coaching` (id, idTeam, gameplanNr, teamPart, down, playrange, gameplay1, gameplay2, rating) values (:id, :idTeam, :gameplanNr, :teamPart, :down, :playrange, :gameplay1, :gameplay2, :rating) 
                             ON DUPLICATE KEY UPDATE gameplay1 = :newGameplay1, gameplay2 = :newGameplay2, rating = :newRating;';
@@ -101,29 +104,59 @@ class CoachingController
      * Speichert den Coachingname in der Datenbank (Tabelle t_coachingname).
      * Falls dieser noch nicht in der Datenbank gespeichert wurde, wird er erstmalig eingefügt, ansonsten wir er aktualisiert.
      * @param Team $team
-     * @param Coachingname $newCoachingname
+     * @param CoachingName $newCoachingname
      * @return int - lastInsertId: ID des neu eingefügten Coachingname oder des aktualisierten Coachingname. 0 bei Fehler.
      */
     public
-    function saveCoachingname(Team $team, Coachingname $newCoachingname): int
+    function saveCoachingName(Team $team, CoachingName $newCoachingname): int
     {
         $selectStmt = $this->pdo->prepare('SELECT id from `t_coachingname` where idTeam = :idTeam and gameplanNr = :gameplanNr and teamPart = :teamPart;');
         $selectStmt->execute(['idTeam' => $team->getId(), 'gameplanNr' => $newCoachingname->getGameplanNr(), 'teamPart' => $newCoachingname->getTeamPart()]);
-        $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
+        $selectedIdColumn = $selectStmt->fetchColumn();
+        if ($selectedIdColumn) {
+            $id = $selectedIdColumn;
+            $this->log->debug('CoachingName entry found in database with id: ' . $id);
+        }
 
-        $saveCoachingname = 'INSERT INTO `t_coachingname` (id, idTeam, gameplanNr, teamPart, gameplanName) values (:id, :idTeam, :gameplanNr, :teamPart, :gameplanName) 
-                            ON DUPLICATE KEY UPDATE gameplanName = :newGameplanName;';
+        $saveCoachingname = 'INSERT INTO `t_coachingname` (id, idTeam, gameplanNr, teamPart, name) values (:id, :idTeam, :gameplanNr, :teamPart, :name) 
+                            ON DUPLICATE KEY UPDATE name = :newName;';
         $saveStmt = $this->pdo->prepare($saveCoachingname);
         $saveStmt->execute([
             'id' => $id ?? null,
             'idTeam' => $team->getId(),
             'gameplanNr' => $newCoachingname->getGameplanNr(),
             'teamPart' => $newCoachingname->getTeamPart(),
-            'gameplanName' => $newCoachingname->getGameplanName(),
-            'newGameplanName' => $newCoachingname->getGameplanName()
+            'name' => $newCoachingname->getName(),
+            'newName' => $newCoachingname->getName()
         ]);
 
-        return $this->pdo->lastInsertId();
+        $savedId = $this->pdo->lastInsertId() != 0 ? $this->pdo->lastInsertId() : $id ?? null;
+
+        $this->log->debug('CoachingName saved with id: ' . $savedId . ' for team: ' . $team->getId() . ' and gameplanNr: ' . $newCoachingname->getGameplanNr() . ' and teamPart: ' . $newCoachingname->getTeamPart());
+        return $savedId;
+    }
+
+    /**
+     * Löscht ein Coaching aus der Datenbank (Tabelle t_coaching).
+     * @param Team $team
+     * @param int $gameplanNr
+     * @param string $teamPart
+     * @return bool - true bei Erfolg, false bei Fehler.
+     */
+    public function deleteCoaching(Team $team, int $gameplanNr, string $teamPart): bool
+    {
+        $deleteStmt = $this->pdo->prepare('DELETE FROM `t_coaching` WHERE idTeam = :idTeam AND gameplanNr = :gameplanNr AND teamPart = :teamPart;');
+        $result = $deleteStmt->execute(['idTeam' => $team->getId(), 'gameplanNr' => $gameplanNr, 'teamPart' => $teamPart]);
+
+        if ($result) {
+            // Remove coaching from team object
+            $coachings = array_filter($team->getCoachings(), function (Coaching $coaching) use ($gameplanNr, $teamPart) {
+                return !($coaching->getGameplanNr() == $gameplanNr && $coaching->getTeamPart() == $teamPart);
+            });
+            $team->setCoachings(array_values($coachings));
+        }
+
+        return $result;
     }
 
     public function getCoachingFromTeam(Team $team, int $gameplanNr, string $teamPart, string $down, string $playrange): Coaching
@@ -139,7 +172,7 @@ class CoachingController
             $coaching->setTeamPart($teamPart);
             $coaching->setDown($down);
             $coaching->setPlayrange($playrange);
-            if ($teamPart == 'Offense') {
+            if ($teamPart == 'offense') {
                 $coaching->setGameplay1('Run;Inside Run');
                 $coaching->setGameplay2('Run;Inside Run');
             } else {
@@ -155,14 +188,14 @@ class CoachingController
     public function getGeneralCoachingFromTeam(Team $team, int $gameplanNr, string $down): Coaching
     {
         $coaching = array_values(array_filter($team->getCoachings(), function (Coaching $coaching) use ($gameplanNr, $down) {
-            return $coaching->getGameplanNr() == $gameplanNr && $coaching->getTeamPart() == 'General' && $coaching->getDown() == $down && $coaching->getPlayrange() == 'General';
+            return $coaching->getGameplanNr() == $gameplanNr && $coaching->getTeamPart() == 'general' && $coaching->getDown() == $down && $coaching->getPlayrange() == 'General';
         }))[0];
 
         if (!isset($coaching) || !$coaching) {
             $coaching = new Coaching();
             $coaching->setIdTeam($team->getId());
             $coaching->setGameplanNr($gameplanNr);
-            $coaching->setTeamPart('General');
+            $coaching->setTeamPart('general');
             $coaching->setDown($down);
             $coaching->setPlayrange('General');
             if ($down == '1st') {
@@ -192,7 +225,7 @@ class CoachingController
         return $ratings;
     }
 
-    public function createBotCoaching(Team $team): void
+    public function createBotCoaching(Team $team, int $gameplanNr = 1, string $specificTeamPart = null): void
     {
         $botOffense = [
             '1stShort' => 'Pass;Medium Pass,Run;Inside Run',
@@ -211,49 +244,60 @@ class CoachingController
 
         $coaching = new Coaching();
         $coaching->setIdTeam($team->getId());
-        $coaching->setGameplanNr(1);
+        $coaching->setGameplanNr($gameplanNr);
         $coaching->setRating(50);
-        foreach (['Offense', 'Defense'] as $teamPart) {
-            $coaching->setTeamPart($teamPart);
-            foreach (['1st', '2nd', '3rd', '4th'] as $down) {
-                $coaching->setDown($down);
-                if ($teamPart == 'Offense') {
-                    foreach (['Short', 'Middle', 'Long'] as $playrange) {
-                        $coaching->setPlayrange($playrange);
 
-                        $gameplay = explode(',', $botOffense[$down . $playrange]);
-                        $coaching->setGameplay1($gameplay[0]);
-                        $coaching->setGameplay2($gameplay[1]);
+        if ($specificTeamPart != 'general') {
+            if ($specificTeamPart != null) {
+                $teamParts[] = $specificTeamPart;
+            } else {
+                $teamParts = ['offense', 'defense'];
+            }
 
-                        $this->saveCoaching($team, $coaching);
-                    }
-                } else {
-                    foreach (['Run', 'Pass'] as $playrange) {
-                        $coaching->setPlayrange($playrange);
-                        $coaching->setGameplay1($playrange . ';Auf Reaktion');
-                        $coaching->setGameplay2($playrange . ';Auf Reaktion');
+            foreach ($teamParts as $teamPart) {
+                $coaching->setTeamPart($teamPart);
+                foreach (['1st', '2nd', '3rd', '4th'] as $down) {
+                    $coaching->setDown($down);
+                    if ($teamPart == 'offense') {
+                        foreach (['Short', 'Middle', 'Long'] as $playrange) {
+                            $coaching->setPlayrange($playrange);
 
-                        $this->saveCoaching($team, $coaching);
+                            $gameplay = explode(',', $botOffense[$down . $playrange]);
+                            $coaching->setGameplay1($gameplay[0]);
+                            $coaching->setGameplay2($gameplay[1]);
+
+                            $this->saveCoaching($team, $coaching);
+                        }
+                    } else {
+                        foreach (['Run', 'Pass'] as $playrange) {
+                            $coaching->setPlayrange($playrange);
+                            $coaching->setGameplay1($playrange . ';Auf Reaktion');
+                            $coaching->setGameplay2($playrange . ';Auf Reaktion');
+
+                            $this->saveCoaching($team, $coaching);
+                        }
                     }
                 }
             }
         }
 
-        $general = new Coaching();
-        $general->setIdTeam($team->getId());
-        $general->setGameplanNr(1);
-        $general->setTeamPart('General');
-        $general->setPlayrange('General');
-        $general->setRating(50);
+        if ($specificTeamPart == null || $specificTeamPart == 'general') {
+            $general = new Coaching();
+            $general->setIdTeam($team->getId());
+            $general->setGameplanNr($gameplanNr);
+            $general->setTeamPart('general');
+            $general->setPlayrange('General');
+            $general->setRating(50);
 
-        $general->setDown('1st');
-        $general->setGameplay1('FGRange;30');
-        $general->setGameplay2('2PtCon;0');
-        $this->saveCoaching($team, $general);
+            $general->setDown('1st');
+            $general->setGameplay1('FGRange;30');
+            $general->setGameplay2('2PtCon;0');
+            $this->saveCoaching($team, $general);
 
-        $general->setDown('2nd');
-        $general->setGameplay1('4thDown;Nie');
-        $general->setGameplay2('QBRun;0');
-        $this->saveCoaching($team, $general);
+            $general->setDown('2nd');
+            $general->setGameplay1('4thDown;Nie');
+            $general->setGameplay2('QBRun;0');
+            $this->saveCoaching($team, $general);
+        }
     }
 }

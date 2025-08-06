@@ -57,8 +57,8 @@ if (isset($pdo, $log)) {
 
 
 // Aktuelle Season aus der Datenbank holen und um 1 erhöhen.
-    $arrSeasonAndGameday = $mainController->fetchSeasonAndGameday();
-    $season = $arrSeasonAndGameday['season'];
+    $main = $mainController->fetchSeasonAndGameday();
+    $season = $main->getSeason();
 
 // TODO: Nach der Closed Beta - Alle Countries aus der Datenbank holen
     $country = 'Deutschland';

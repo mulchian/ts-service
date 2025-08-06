@@ -39,7 +39,7 @@ if (isset($pdo, $log)) {
                 } else {
                     $errorMsg = 'Es gibt keine freien Mitarbeiter.';
                     $log->debug('getUnemployedEmployees' . $errorMsg);
-                    $data['errorMessage'] = $errorMsg;
+                    $data['error'] = $errorMsg;
                 }
             } else {
                 $data = $unemployedEmployees;

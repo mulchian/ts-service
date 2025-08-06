@@ -94,13 +94,13 @@ class StadiumController
     /**
      * Gibt das Stadion inklusiver aller Gebäude zurück.
      * @param Team $team
-     * @return Stadium|null -> gefundenes Stadion oder null bei keinem Eintrag in der Tabelle (t_stadium).
+     * @return Stadium|null → gefundenes Stadion oder null bei keinem Eintrag in der Tabelle (t_stadium).
      */
     public function fetchStadium(Team $team): ?Stadium
     {
         $stadium = select($this->pdo, 'SELECT * FROM `t_stadium` where idTeam = :idTeam;', 'touchdownstars\\stadium\\Stadium', ['idTeam' => $team->getId()]);
 
-        if (isset($stadium) && !empty($stadium)) {
+        if (!empty($stadium)) {
             //fetch Buildings to stadium
             $selectStmt = $this->pdo->prepare('SELECT * FROM `t_building` tb JOIN `t_building_to_stadium` tbts ON tb.id = tbts.idBuilding WHERE tbts.idStadium = :idStadium');
             $selectStmt->execute(['idStadium' => $stadium->getId()]);
@@ -153,6 +153,15 @@ class StadiumController
         $selectBuildingsStmt = $this->pdo->prepare('SELECT * FROM `t_building`');
         $selectBuildingsStmt->execute();
         $selectBuildingsStmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\stadium\\Building');
-        return $selectBuildingsStmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\stadium\\Building');
+        $buildings = $selectBuildingsStmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\stadium\\Building');
+        if (!empty($buildings)) {
+            foreach ($buildings as $building) {
+                $selectBuildingLevelsStmt = $this->pdo->prepare('SELECT * FROM `t_building_level` WHERE idBuilding = :idBuilding ORDER BY level;');
+                $selectBuildingLevelsStmt->execute(['idBuilding' => $building->getId()]);
+                $buildingLevels = $selectBuildingLevelsStmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\stadium\\BuildingLevel');
+                $building->setBuildingLevels($buildingLevels);
+            }
+        }
+        return $buildings;
     }
 }

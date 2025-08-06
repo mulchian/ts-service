@@ -23,3 +23,11 @@ function getTeam(Logger $log, TeamController $teamController): mixed
     }
     return $team;
 }
+
+function updatable(?DateTime $trainingTime): bool
+{
+    if ((isset($trainingTime) && $trainingTime < (new DateTime('now'))) || !isset($trainingTime)) {
+        return true;
+    }
+    return false;
+}

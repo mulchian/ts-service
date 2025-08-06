@@ -47,7 +47,7 @@ if (isset($pdo, $log)) {
             foreach ($players as $player) {
                 $playerToReturn = array(
                     'id' => $player->getId(),
-                    'name' => $player->getFirstName() . ' getLineup.php' . $player->getLastName(),
+                    'name' => $player->getFirstName() . ' ' . $player->getLastName(),
                     'age' => $player->getAge(),
                     'ovr' => $player->getOVR(),
                     'talent' => $player->getTalent(),

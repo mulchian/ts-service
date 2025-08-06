@@ -13,26 +13,27 @@ if (isset($pdo, $log)) {
     $teamController = new TeamController($pdo, $log);
     $coachingController = new CoachingController($pdo);
 
-    if (isset($_SESSION['team']) && !empty($_SESSION['team'])) {
+    if (!empty($_SESSION['team'])) {
         $team = $_SESSION['team'];
     }
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($team)) {
+        $log->debug('getCoaching - ' . print_r($_POST, true));
         // getOneCoaching
         if (isset($_POST['gameplanNr']) && isset($_POST['teamPart']) && isset($_POST['down']) && isset($_POST['playrange'])) {
             $gameplanNr = 1;
-            $teamPart = 'Offense';
+            $teamPart = 'offense';
             $down = '1st';
             $playrange = 'Short';
-            if (isset($_POST['gameplanNr']) && !empty($_POST['gameplanNr'])) {
+            if (!empty($_POST['gameplanNr'])) {
                 $gameplanNr = $_POST['gameplanNr'];
             }
-            if (isset($_POST['teamPart']) && !empty($_POST['teamPart'])) {
+            if (!empty($_POST['teamPart'])) {
                 $teamPart = $_POST['teamPart'];
             }
-            if (isset($_POST['down']) && !empty($_POST['down'])) {
+            if (!empty($_POST['down'])) {
                 $down = $_POST['down'];
             }
-            if (isset($_POST['playrange']) && !empty($_POST['playrange'])) {
+            if (!empty($_POST['playrange'])) {
                 $playrange = $_POST['playrange'];
             }
 
@@ -45,7 +46,7 @@ if (isset($pdo, $log)) {
             $gameplanOff = $_POST['gameplanOff'];
             $gameplanDef = $_POST['gameplanDef'];
             $teamCoachings = array_values(array_filter($team->getCoachings(), function (Coaching $coaching) use ($gameplanOff, $gameplanDef) {
-                return (in_array($coaching->getTeamPart(), ['Offense', 'General']) && $coaching->getGameplanNr() == $gameplanOff) || ($coaching->getTeamPart() == 'Defense' && $coaching->getGameplanNr() == $gameplanDef);
+                return (in_array($coaching->getTeamPart(), ['offense', 'general']) && $coaching->getGameplanNr() == $gameplanOff) || ($coaching->getTeamPart() == 'defense' && $coaching->getGameplanNr() == $gameplanDef);
             }));
 
             $data['coachings'] = array();
@@ -59,11 +60,12 @@ if (isset($pdo, $log)) {
                     'gameplay2' => $coaching->getGameplay2(),
                     'rating' => $coaching->getRating()
                 ];
-                array_push($data['coachings'], $json);
+                $data['coachings'][] = $json;
             }
         }
 
-        if (isset($data) && !empty($data)) {
+        if (!empty($data)) {
+            $log->debug('getCoaching - ' . print_r($data, true));
             echo json_encode($data);
         }
     }

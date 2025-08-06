@@ -4,6 +4,8 @@
 namespace touchdownstars\league;
 
 
+use Cassandra\Date;
+use DateTime;
 use PDO;
 use Monolog\Logger;
 use touchdownstars\team\Team;
@@ -41,7 +43,7 @@ class LeagueController
         return false;
     }
 
-    public function hasGameAtGivenTime(Team $team, int $gameTime): bool
+    public function hasGameAtGivenTime(Team $team, DateTime $gameTime): bool
     {
         $selectStmt = $this->pdo->prepare('SELECT gameDay, gameTime, homeAccepted, awayAccepted 
                                                     FROM `t_event` 
@@ -50,8 +52,8 @@ class LeagueController
         $selectStmt->execute([
             'home' => $team->getName(),
             'away' => $team->getName(),
-            'now1' => $gameTime,
-            'now2' => $gameTime
+            'now1' => $gameTime->format('Y-m-d H:i:s'),
+            'now2' => $gameTime->format('Y-m-d H:i:s')
         ]);
         $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
         $this->log->debug('hasGameAtGivenTime - Result: ' . print_r($result, true));
@@ -139,7 +141,7 @@ class LeagueController
     public function getAllFriendlies(Team $team): array
     {
         $selectStmt = $this->pdo->prepare('SELECT id, gameTime, season, home, away, homeAccepted, awayAccepted FROM `t_event` 
-                                                                    WHERE idLeague is null AND (home = :home OR away = :away) and gameTime > unix_timestamp()');
+                                                                    WHERE idLeague is null AND (home = :home OR away = :away) and gameTime > NOW()');
         $selectStmt->execute([
             'home' => $team->getName(),
             'away' => $team->getName()
@@ -149,19 +151,19 @@ class LeagueController
         return $result;
     }
 
-    public function saveFriendly(int $gameTime, int $season, string $home, string $away, bool $homeAccepted, bool $awayAccepted): int
+    public function saveFriendly(DateTime $gameTime, int $season, string $home, string $away, bool $homeAccepted, bool $awayAccepted): int
     {
         // Prüfung +-1 Stunden kein anderer Spielstart (Season oder Friendly)
         $selectStmt = $this->pdo->prepare('SELECT id FROM `t_event` 
                 WHERE (home = :home1 or away = :home2 or home = :away1 or away = :away2) 
-                and :gameTime1 + 3600 > gameTime and :gameTime2 - 3600 < gameTime');
+                and DATE_ADD(:gameTime1, INTERVAL 1 HOUR) > gameTime and DATE_SUB(:gameTime2, INTERVAL 1 HOUR) < gameTime');
         $selectStmt->execute([
             'home1' => $home,
             'home2' => $home,
             'away1' => $away,
             'away2' => $away,
-            'gameTime1' => $gameTime,
-            'gameTime2' => $gameTime
+            'gameTime1' => $gameTime->format('Y-m-d H:i:s'),
+            'gameTime2' => $gameTime->format('Y-m-d H:i:s')
         ]);
         $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
         $id = $result ? $result['id'] : null;
@@ -170,22 +172,22 @@ class LeagueController
             $saveStmt = $this->pdo->prepare('INSERT INTO `t_event` (gameTime, season, home, away, homeAccepted, awayAccepted) 
                                                 VALUES (:gameTime, :season, :home, :away, :homeAccepted, :awayAccepted)');
             $saveStmt->execute([
-                'gameTime' => $gameTime,
+                'gameTime' => $gameTime->format('Y-m-d H:i:s'),
                 'season' => $season,
                 'home' => $home,
                 'away' => $away,
-                'homeAccepted' => $homeAccepted,
-                'awayAccepted' => $awayAccepted
+                'homeAccepted' => (int) $homeAccepted,
+                'awayAccepted' => (int) $awayAccepted
             ]);
             $id = $this->pdo->lastInsertId();
         } else {
-            $this->log->debug('Zu dem Zeitpunkt ' . date('d.m.Y H:i', $gameTime) . ' hat eines der Teams ' . $home . ' und ' . $away . ' bereits ein Spiel.');
+            $this->log->debug('Zu dem Zeitpunkt ' . $gameTime->format('d.m.Y H:i') . ' hat eines der Teams ' . $home . ' und ' . $away . ' bereits ein Spiel.');
         }
 
         return $id;
     }
 
-    public function acceptFriendly(int $gameTime, string $home, string $away, bool $homeAccepted, bool $awayAccepted): int
+    public function acceptFriendly(DateTime $gameTime, string $home, string $away, bool $homeAccepted, bool $awayAccepted): int
     {
         $selectStmt = $this->pdo->prepare('SELECT id, homeAccepted, awayAccepted FROM `t_event` 
                 WHERE ((home = :home1 and away = :away1) OR (home = :home2 AND away = :away2)) and gameTime = :gameTime');
@@ -194,7 +196,7 @@ class LeagueController
             'away1' => $away,
             'home2' => $away,
             'away2' => $home,
-            'gameTime' => $gameTime
+            'gameTime' => $gameTime->format('Y-m-d H:i:s')
         ]);
         $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
         $this->log->debug('Fetched Friendly: ' . print_r($result, true));
@@ -208,13 +210,13 @@ class LeagueController
                 'id' => $id
             ]);
         } else {
-            $this->log->debug('Es konnte kein Spiel um ' . date('d.m.Y H:i', $gameTime) . ' Uhr zwischen den Teams ' . $home . ' und ' . $away . ' gefunden werden.');
+            $this->log->debug('Es konnte kein Spiel um ' . $gameTime->format('d.m.Y H:i') . ' Uhr zwischen den Teams ' . $home . ' und ' . $away . ' gefunden werden.');
         }
 
         return $id;
     }
 
-    public function declineFriendly(int $id, int $gameTime, string $home, string $away): bool
+    public function declineFriendly(int $id, DateTime $gameTime, string $home, string $away): bool
     {
 
         $selectStmt = $this->pdo->prepare('SELECT id FROM `t_event` 
@@ -225,7 +227,7 @@ class LeagueController
             'away1' => $away,
             'home2' => $away,
             'away2' => $home,
-            'gameTime' => $gameTime
+            'gameTime' => $gameTime->format('Y-m-d H:i:s')
         ]);
         $result = $selectStmt->fetch(PDO::FETCH_ASSOC);
         $dbId = $result['id'];
@@ -372,9 +374,12 @@ class LeagueController
     public function fetchAllLiveGames(): array
     {
         // gameTime > 0 cause league games don't have one right now
-        $selectStmt = $this->pdo->prepare('SELECT * FROM `t_event` WHERE gameTime > 0 AND unix_timestamp() >= gameTime AND result is null');
+        $selectStmt = $this->pdo->prepare('SELECT id, gameTime, season, 
+            gameDay, home, away, result, idLeague, homeAccepted, awayAccepted 
+            FROM `t_event` WHERE gameTime is not null AND NOW() >= gameTime AND result is null');
         $selectStmt->execute();
         $result = $selectStmt->fetchAll(PDO::FETCH_ASSOC);
+        $result['gameTime'] = new DateTime($result['gameTime']);
 
         $liveGames = array();
         foreach ($result as $game) {

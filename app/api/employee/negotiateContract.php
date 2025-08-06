@@ -96,7 +96,7 @@ if (isset($pdo, $log)) {
 
         if (!empty($errorMsg)) {
             $log->warning('negotiateContract: ' . $errorMsg);
-            $data['errorMessage'] = $errorMsg;
+            $data['error'] = $errorMsg;
         }
         $data['isNegotiated'] = $isNegotiated;
 

@@ -2,7 +2,7 @@
 
 use touchdownstars\coaching\Coaching;
 use touchdownstars\coaching\CoachingController;
-use touchdownstars\coaching\Coachingname;
+use touchdownstars\coaching\CoachingName;
 use touchdownstars\team\Team;
 use touchdownstars\team\TeamController;
 
@@ -70,28 +70,28 @@ if (isset($pdo) && isset($log)) {
 
         //save gameplanName
         if (isset($gameplanNr, $_POST['gameplanName'], $_POST['teamPart'])) {
-            $newCoachingname = new Coachingname();
-            $newCoachingname->setIdTeam($team->getId());
-            $newCoachingname->setGameplanNr($gameplanNr);
-            $newCoachingname->setGameplanName($_POST['gameplanName']);
-            $newCoachingname->setTeamPart($_POST['teamPart']);
+            $newCoachingName = new CoachingName();
+            $newCoachingName->setIdTeam($team->getId());
+            $newCoachingName->setGameplanNr($gameplanNr);
+            $newCoachingName->setGameplanName($_POST['gameplanName']);
+            $newCoachingName->setTeamPart($_POST['teamPart']);
 
-            $idCoachingName = $coachingController->saveCoachingname($team, $newCoachingname);
+            $idCoachingName = $coachingController->saveCoachingName($team, $newCoachingName);
 
             if ($idCoachingName) {
-                $newCoachingname->setId($idCoachingName);
+                $newCoachingName->setId($idCoachingName);
 
                 // update Coaching in Session-Team
-                $coachingname = array_values(array_filter($team->getCoachingnames(), function (Coachingname $coachingname) use ($newCoachingname) {
-                    return $coachingname->getGameplanNr() == $newCoachingname->getGameplanNr() && $coachingname->getTeamPart() == $newCoachingname->getTeamPart();
+                $coachingname = array_values(array_filter($team->getCoachingNames(), function (CoachingName $coachingname) use ($newCoachingName) {
+                    return $coachingname->getGameplanNr() == $newCoachingName->getGameplanNr() && $coachingname->getTeamPart() == $newCoachingName->getTeamPart();
                 }))[0];
 
                 if (isset($coachingname)) {
-                    $coachingname->setGameplanName($newCoachingname->getGameplanName());
+                    $coachingname->setGameplanName($newCoachingName->getName());
                 } else {
-                    $coachingnames = $team->getCoachingnames();
-                    array_push($coachingnames, $newCoachingname);
-                    $team->setCoachingnames($coachingnames);
+                    $coachingnames = $team->getCoachingNames();
+                    $coachingnames[] = $newCoachingName;
+                    $team->setCoachingNames($coachingnames);
                 }
             }
 
@@ -131,7 +131,8 @@ function createCoaching(int $idTeam, array $coachingArray): ?Coaching {
     return null;
 }
 
-function saveCoaching(Team $team, CoachingController $coachingController, Coaching $newCoaching) {
+function saveCoaching(Team $team, CoachingController $coachingController, Coaching $newCoaching): void
+{
     $coachingController->saveCoaching($team, $newCoaching);
 
     // update Coaching in Session-Team

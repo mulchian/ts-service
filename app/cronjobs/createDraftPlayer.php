@@ -18,8 +18,8 @@ if (isset($pdo, $log)) {
 
     $numberOfPlayerPerDraftPerLeague = 256;
 
-    $arrSeasonAndGameday = $mainController->fetchSeasonAndGameday();
-    $season = $arrSeasonAndGameday['season'];
+    $main = $mainController->fetchSeasonAndGameday();
+    $season = $main->getSeason();
 
     $positions = $positionController->fetchAllPositions();
     $country = 'Deutschland';

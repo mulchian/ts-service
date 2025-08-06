@@ -76,7 +76,7 @@ class RunCalculation
         $gameController = new GameController($this->pdo);
         $runner = 'RB';
         $coachingController = new CoachingController($this->pdo);
-        $generalCoaching = $coachingController->getCoachingFromTeam($team, $team->getGameplanOff(), 'Offense', '2nd', 'General');
+        $generalCoaching = $coachingController->getCoachingFromTeam($team, $team->getGameplanOff(), 'offense', '2nd', 'General');
         $isQB = explode(';', $generalCoaching->getGameplay2())[1] == '1';
         $isFB = $team->getLineupOff() == 'FB';
 

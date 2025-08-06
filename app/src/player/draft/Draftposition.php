@@ -4,6 +4,7 @@
 namespace touchdownstars\player\draft;
 
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -27,7 +28,7 @@ use touchdownstars\league\League;
  * @method void setLeague(League $league)
  */
 #[Setter, Getter]
-class Draftposition extends Helper
+class Draftposition extends Helper implements JsonSerializable
 {
     private int $id;
     private int $season;
@@ -35,4 +36,16 @@ class Draftposition extends Helper
     private ?int $pick;
     private bool $drafted = false;
     private League $league;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'season' => $this->getSeason(),
+            'round' => $this->getRound(),
+            'pick' => $this->getPick(),
+            'drafted' => $this->isDrafted(),
+            'league' => $this->getLeague()
+        ];
+    }
 }

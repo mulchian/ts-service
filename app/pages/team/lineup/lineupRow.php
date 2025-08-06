@@ -6,7 +6,7 @@ if (isset($pdo, $log, $team, $teamPart)):
     $teamController = new TeamController($pdo, $log);
     $players = $teamController->getStartingPlayers($team);
 
-    if (strcmp($teamPart, 'Offense') == 0):
+    if (strcmp($teamPart, 'offense') == 0):
         ?>
         <div class="col">
             <div class="row m-2 justify-content-center">
@@ -112,7 +112,7 @@ if (isset($pdo, $log, $team, $teamPart)):
                 </div>
             </div>
         </div>
-    <?php elseif (strcmp($teamPart, 'Defense') == 0): ?>
+    <?php elseif (strcmp($teamPart, 'defense') == 0): ?>
         <div class="col">
             <div class="row m-2 justify-content-center">
                 <div class="col-sm-3">

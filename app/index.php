@@ -79,9 +79,9 @@ if (isset($pdo, $log)) {
 function updateMainInformation(PDO $pdo, Logger $log): void
 {
     $mainController = new MainController($pdo, $log);
-    $arrSeasonAndGameday = $mainController->fetchSeasonAndGameday();
-    $_SESSION['season'] = $arrSeasonAndGameday['season'];
-    $_SESSION['gameday'] = $arrSeasonAndGameday['gameday'];
+    $main = $mainController->fetchSeasonAndGameday();
+    $_SESSION['season'] = $main->getSeason();
+    $_SESSION['gameday'] = $main->getGameday();
 }
 
 if (isset($pdo, $log) && isset($_SESSION['user']) && !empty(isset($_SESSION['user']))) {
@@ -188,13 +188,13 @@ $differenceTime = round($differenceTime, 3);
     });
 
     function updateActivity(status) {
-        let now = Date.now();
+        let now = (new Date()).toISOString();
         if ((LAST_ACTIVE_TIME + 60000) < now) {
             $.ajax({
                 type: 'POST',
                 url: AJAX_USER_URL + 'saveUserStatus.php',
                 data: {
-                    lastActiveTime: Math.floor(now / 1000),
+                    lastActiveTime: now,
                     status: status
                 },
                 dataType: 'JSON'

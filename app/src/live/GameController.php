@@ -2,6 +2,7 @@
 
 namespace touchdownstars\live;
 
+use DateTime;
 use PDO;
 use touchdownstars\coaching\Coaching;
 use touchdownstars\coaching\CoachingController;
@@ -291,42 +292,46 @@ class GameController
         return $this->dw_rand($calcSpace, $middleKey);
     }
 
-    public function getOrCalcLastGameplayResult(int $gameTime, array $game): array
+    public function getOrCalcLastGameplayResult(DateTime $gameTime, array $game): array
     {
         // $gameplayTime = 15 * ceil($gameTime / 15);
-        $gameplayTime = 10 * ceil($gameTime / 10);
-        $this->log->debug('gameplayTime: ' . $gameplayTime);
+        // $gameplayTime = 10 * ceil($gameTime / 10);
+        $ceiledSeconds = 10 * ceil((int) (new DateTime('now'))->format('s') / 10);
+        $gameplayTime = $gameTime->setTime(0,0, $ceiledSeconds);
+        $this->log->debug('gameplayTime: ' . $gameplayTime->format('H:i:s'));
+        $gameplayTimeMinusTen = (clone $gameplayTime)->modify('- 10 seconds');
+        $this->log->debug('gameplayTimeMinusTen: ' . $gameplayTimeMinusTen->format('H:i:s'));
 
         // Suche in der Datenbank nach dem Game (League oder Friendly), ob schon Daten vorhanden sind.
         // Andernfalls muss ein Spielzug berechnet werden.
         $gameplayHistory = $this->getGameCalculation($game, $gameplayTime);
-        $this->log->debug('History-GameplayTime: ' . (isset($gameplayHistory) ? $gameplayHistory['gameplayTime'] : 'null'));
+        $this->log->debug('History-GameplayTime: ' . (isset($gameplayHistory) ? $gameplayHistory['gameplayTime']->format('Y-m-d H:i:s') : 'null'));
 
         if (null == $gameplayHistory && $game['gameTime'] <= $gameplayTime) {
-            $this->log->debug('game-gameTime: ' . $game['gameTime'] . ' | gameplayTime: ' . $gameplayTime);
+            $this->log->debug('game-gameTime: ' . $game['gameTime'] . ' | gameplayTime: ' . $gameplayTime->format('H:i:s'));
             $gameplayHistory = $this->calculateGameplay($game, $game['gameTime']);
             $this->log->debug('Calculated Gameplay History: ' . print_r($gameplayHistory, true));
-            $this->log->debug('Calculated-GameplayTime: ' . $gameplayHistory['gameplayTime']);
-            $this->log->debug('Is gameplayHistory-gameplayTime smaller than gameplayTime - 10? ' . ($gameplayHistory['gameplayTime'] < $gameplayTime - 10 ? 'true' : 'false'));
-            if (!$gameplayHistory['isEnd'] && $gameplayHistory['gameplayTime'] < $gameplayTime - 10) {
+            $this->log->debug('Calculated-GameplayTime: ' . $gameplayHistory['gameplayTime']->format('H:i:s'));
+            $this->log->debug('Is gameplayHistory-gameplayTime smaller than gameplayTime - 10? ' . ($gameplayHistory['gameplayTime'] < $gameplayTimeMinusTen ? 'true' : 'false'));
+            if (!$gameplayHistory['isEnd'] && $gameplayHistory['gameplayTime'] < $gameplayTimeMinusTen) {
                 $this->log->debug('It was the first gameplay, but the game already started. We have to calculate recursively until we reach the current gameplayTime.');
                 $gameplayHistory = $this->getOrCalcLastGameplayResult($gameTime, $game);
             }
-        } elseif ($gameplayHistory['gameplayTime'] <= $gameplayTime - 10) {
+        } elseif ($gameplayHistory['gameplayTime'] <= $gameplayTimeMinusTen) {
             $this->log->debug('starting loop for older gameplays.');
-            $this->log->debug('gameplayHistory-gameplayTime: ' . $gameplayHistory['gameplayTime'] . ' | gameplayTime: ' . $gameplayTime);
+            $this->log->debug('gameplayHistory-gameplayTime: ' . $gameplayHistory['gameplayTime']->format('H:i:s') . ' | gameplayTime: ' . $gameplayTime->format('H:i:s'));
             // Wenn die GameplayHistory älter ist als 10 Sekunden (also älter als der letztmögliche Spielzug),
             // müssen alle nachfolgenden Spielzüge bis zum aktuellen berechnet werden.
             // Die Schleife sollte also alle Spielzüge berechnen und in die Datenbank schreiben.
             // Der letzte berechnete Spielzug ist dann der aktuelle Spielzug und wird ans Frontend geschickt.
-            while (($gameplayHistory['gameplayTime'] <= ($gameplayTime - 10)
+            while (($gameplayHistory['gameplayTime'] <= ($gameplayTimeMinusTen)
                 // && !($gameplayHistory['quarter'] == 4 && $gameplayHistory['playClock'] == 0))
                 && !$gameplayHistory['isEnd'])) {
                 // Der aktuelle Spielzug ist immer der letzte Spielzug + 10 Sekunden.
-                $timeOfActualGameplay = $gameplayHistory['gameplayTime'] + 10;
+                $timeOfActualGameplay = (clone $gameplayHistory['gameplayTime'])->modify('+ 10 seconds');
                 $this->log->debug('Gameplay-Schleifendurchlauf');
-                $this->log->debug('gameplayTime: ' . $gameplayTime);
-                $this->log->debug('gameplayHistory: ' . $gameplayHistory['gameplayTime']);
+                $this->log->debug('gameplayTime: ' . $gameplayTime->format('H:i:s'));
+                $this->log->debug('gameplayHistory: ' . $gameplayHistory['gameplayTime']->format('H:i:s'));
                 $this->log->debug('timeOfActualGameplay: ' . $timeOfActualGameplay);
                 $gameplayHistory = $this->calculateGameplay($game, $timeOfActualGameplay);
                 $gameplayHistory['gameplayTime'] = $timeOfActualGameplay;
@@ -499,7 +504,7 @@ class GameController
         return array($recoveringYards => $fumbleText);
     }
 
-    public function getGameCalculation(array $game, int $gameplayTime): ?array
+    public function getGameCalculation(array $game, DateTime $gameplayTime): ?array
     {
         $selectStmt = 'SELECT * FROM `t_gameplay_history` 
                     WHERE (gameplayTime = :gameplayTime AND (idLeagueGame = :idLeagueGame OR idFriendlyGame = :idFriendlyGame)) 
@@ -507,7 +512,7 @@ class GameController
                     ORDER BY quarter DESC, playClock, gameplayTime DESC LIMIT 1;';
         $stmt = $this->pdo->prepare($selectStmt);
         $stmt->execute([
-            'gameplayTime' => $gameplayTime,
+            'gameplayTime' => $gameplayTime->format('Y-m-d H:i:s'),
             'idLeagueGame' => $game['id'],
             'idFriendlyGame' => $game['id'],
             'idLeagueGame2' => $game['id'],
@@ -515,6 +520,7 @@ class GameController
         ]);
         $gameHistory = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($gameHistory) {
+            $gameHistory['gameplayTime'] = new DateTime($gameHistory['gameplayTime']);
             return $gameHistory;
         }
         return null;

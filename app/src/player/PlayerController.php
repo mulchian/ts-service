@@ -38,11 +38,14 @@ class PlayerController
         $players = $selectStmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\player\\Player');
 
         // Für jeden Spieler werden Skills, Status, Character und Type gebraucht
+        $indexedPlayers = [];
         foreach ($players as $player) {
             $this->addPlayersInformation($player);
+            $player->setTeamName($team->getName());
+            $indexedPlayers[$player->getId()] = $player;
         }
 
-        return $players;
+        return $indexedPlayers;
     }
 
     public function fetchPlayer(string $playerId): ?Player
@@ -241,11 +244,11 @@ class PlayerController
 
         $marketValue = $this->calcMarketValue($player->getType()->getPosition(), $player->getAge(), $player->getTalent(), $player->getOVR());
         $insertPlayer = 'INSERT INTO `t_player` (id, lastName, firstName, age, nationality, height, weight, marketValue, 
-                        energy, moral, experience, talent, skillpoints, timeInLeague, idTeam, idStatus, idCharacter, idType, idContract, idDraftposition) 
+                        energy, moral, minContractMoral, experience, talent, skillpoints, timeInLeague, hallOfFame, idTeam, idStatus, idCharacter, idType, idContract, idDraftposition) 
                         VALUES (:id, :lastName, :firstName, :age, :nationality, :height, :weight, :marketValue, :energy,
-                               :moral, :experience, :talent, :skillpoints, :timeInLeague, :idTeam, :idStatus, :idCharacter, :idType, :idContract, :idDraftposition) 
-                        ON DUPLICATE KEY UPDATE age = :ageW, marketValue = :marketValueW, energy = :energyW, moral = :moralW, experience = :experienceW, skillpoints = :skillpointsW, 
-                                                timeInLeague = :timeInLeagueW, idTeam = :idTeamW, idStatus = :idStatusW, idContract = :idContractW, idDraftposition = :idDraftpositionW;';
+                               :moral, :minContractMoral, :experience, :talent, :skillpoints, :timeInLeague, :hallOfFame, :idTeam, :idStatus, :idCharacter, :idType, :idContract, :idDraftposition) 
+                        ON DUPLICATE KEY UPDATE age = :ageW, marketValue = :marketValueW, energy = :energyW, moral = :moralW, minContractMoral = :minContractMoralW, experience = :experienceW, skillpoints = :skillpointsW, 
+                                                timeInLeague = :timeInLeagueW, hallOfFame = :hallOfFameW, idTeam = :idTeamW, idStatus = :idStatusW, idContract = :idContractW, idDraftposition = :idDraftpositionW;';
         $stmt = $this->pdo->prepare($insertPlayer);
         $stmt->execute([
             'id' => $id ?? null,
@@ -258,10 +261,12 @@ class PlayerController
             'marketValue' => $marketValue,
             'energy' => $player->getEnergy(),
             'moral' => $player->getMoral(),
+            'minContractMoral' => $player->getMinContractMoral(),
             'experience' => $player->getExperience(),
             'talent' => $player->getTalent(),
             'skillpoints' => $player->getSkillpoints(),
             'timeInLeague' => $player->getTimeInLeague(),
+            'hallOfFame' => (int)$player->isHallOfFame(),
             'idTeam' => $player->getIdTeam(),
             'idStatus' => $player->getStatus()->getId(),
             'idCharacter' => $player->getCharacter()->getId(),
@@ -272,9 +277,11 @@ class PlayerController
             'marketValueW' => $marketValue,
             'energyW' => $player->getEnergy(),
             'moralW' => $player->getMoral(),
+            'minContractMoralW' => $player->getMinContractMoral(),
             'experienceW' => $player->getExperience(),
             'skillpointsW' => $player->getSkillpoints(),
             'timeInLeagueW' => $player->getTimeInLeague(),
+            'hallOfFameW' => (int)$player->isHallOfFame(),
             'idTeamW' => $player->getIdTeam(),
             'idStatusW' => $player->getStatus()->getId(),
             'idContractW' => null != $player->getContract() ? $player->getContract()->getId() : null,

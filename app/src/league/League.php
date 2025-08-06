@@ -4,6 +4,7 @@
 namespace touchdownstars\league;
 
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -22,10 +23,20 @@ use Lombok\Setter;
  * @method void setCountry(string $country)
  */
 #[Setter, Getter]
-class League extends Helper
+class League extends Helper implements JsonSerializable
 {
     private int $id;
     private string $description;
     private int $leagueNumber;
     private string $country;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'description' => $this->getDescription(),
+            'leagueNumber' => $this->getLeagueNumber(),
+            'country' => $this->getCountry()
+        ];
+    }
 }

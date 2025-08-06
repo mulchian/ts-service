@@ -48,19 +48,19 @@ if (isset($_SESSION['team'])) :
         </div>
         <div id="rowOffense" class="row">
             <?php
-            $teamPart = 'Offense';
+            $teamPart = 'offense';
             include('lineupRow.php');
             ?>
         </div>
         <div id="rowDefense" class="row d-none">
             <?php
-            $teamPart = 'Defense';
+            $teamPart = 'defense';
             include('lineupRow.php');
             ?>
         </div>
         <div id="rowSpecial" class="row d-none">
             <?php
-            $teamPart = 'Special';
+            $teamPart = 'special';
             include('lineupRow.php');
             ?>
         </div>

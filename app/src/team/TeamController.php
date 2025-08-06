@@ -4,6 +4,8 @@
 namespace touchdownstars\team;
 
 
+use DateTime;
+use DateTimeZone;
 use PDO;
 use touchdownstars\coaching\CoachingController;
 use touchdownstars\employee\EmployeeController;
@@ -22,6 +24,7 @@ use touchdownstars\stadium\StadiumController;
 use touchdownstars\statistics\StatisticsController;
 use touchdownstars\user\User;
 use touchdownstars\user\UserController;
+use function PHPUnit\Framework\isEmpty;
 
 class TeamController
 {
@@ -109,7 +112,7 @@ class TeamController
                 $employeeController = new EmployeeController($this->pdo, $this->log);
                 $team->setEmployees($employeeController->fetchEmployeesOfTeam($team));
 
-                $team->setCoachingnames($coachingController->fetchAllCoachingnames($team->getId()));
+                $team->setCoachingNames($coachingController->fetchAllCoachingNames($team->getId()));
             }
 
             $playerController = new PlayerController($this->pdo, $this->log);
@@ -145,7 +148,7 @@ class TeamController
         $selectTeams = 'SELECT tt.* FROM `t_team` tt 
             JOIN `t_team_to_league` tttl ON tt.id = tttl.idTeam JOIN `t_league` tl ON tl.id = tttl.idLeague';
 
-        if (null != $leagueCountry) {
+        if (!isEmpty($leagueCountry)) {
             $selectTeams .= $whereOrAnd . 'tl.country = :country';
             $params = ['country' => $leagueCountry];
             $whereOrAnd = ' AND ';
@@ -169,14 +172,23 @@ class TeamController
                 $userController = new UserController($this->pdo, $this->log);
                 foreach ($resultTeams as $team) {
                     $this->log->debug('Team: ' . $team->getName());
-                    $team->setUser($userController->fetchUserById($team->idUser));
+                    $team->setUser($userController->fetchUserById($team->getIdUser()));
                 }
             }
             $leagueController = new LeagueController($this->pdo, $this->log);
+            $stadiumController = new StadiumController($this->pdo);
+            $playerController = new PlayerController($this->pdo, $this->log);
+            $employeeController = new EmployeeController($this->pdo, $this->log);
+            $coachingController = new CoachingController($this->pdo);
             foreach ($resultTeams as $team) {
                 $team->setLeague($leagueController->fetchLeagueForTeam($team));
                 $team->setConference($leagueController->fetchConferenceForTeam($team));
                 $team->setDivision($leagueController->fetchDivisionForTeam($team));
+                // TODO: these following fields should be nullable. We only need a part of the data for the frontend
+                $team->setStadium($stadiumController->fetchStadium($team));
+                $team->setPlayers($playerController->fetchPlayers($team));
+                $team->setEmployees($employeeController->fetchEmployeesOfTeam($team));
+                $team->setCoachings($coachingController->fetchAllCoachings($team->getId()));
             }
             return $resultTeams;
         }
@@ -274,7 +286,7 @@ class TeamController
             $botTeam = $this->searchBotTeamForDelete($conferenceName, $country);
 
             // Wird kein Bot-Team gefunden, kann auch kein Team angelegt werden.
-            if (isset($botTeam) && !empty($botTeam)) {
+            if (!empty($botTeam)) {
                 $league = $botTeam->getLeague();
 
                 // Erstelle Team und speichere es in der Datenbank
@@ -285,6 +297,7 @@ class TeamController
                 $team->setSalaryCap($this->getStartSalaryCap($league));
                 $team->setUser($user);
 
+                $team->setGameplanGeneral(1);
                 $team->setGameplanOff(1);
                 $team->setGameplanDef(1);
                 $team->setLineupOff('TE');
@@ -417,7 +430,7 @@ class TeamController
 
         $conferences = $this->getConferences($leagueTeams);
         foreach ($conferences as $conferenceKey => $conferenceTeams) {
-            if (isset($conferenceName) && !empty($conferenceName)) {
+            if (!empty($conferenceName)) {
                 $conference = $leagueController->fetchConference($conferenceName);
             } else {
                 $conference = $leagueController->fetchConference($conferenceKey);
@@ -501,8 +514,8 @@ class TeamController
     private
     function getStartSalaryCap(League $league): int
     {
-        // Höchstes SalaryCap (Liga 1) kommt aus Datenbank zur einfacheren Anpassung.
-        // Anpassung des SalaryCaps an die Liga (Liga 1 150 Mio | Liga 2 140 Mio | Liga 3 130 Mio etc.)
+        // Höchstes SalaryCap (Liga 1) kommt aus der Datenbank zur einfacheren Anpassung.
+        // Anpassung des SalaryCaps an die Liga (Liga 1 150 Mio. | Liga 2 140 Mio. | Liga 3 130 Mio. etc.)
         $selectStmt = $this->pdo->prepare('SELECT highestSalaryCap FROM `t_main` WHERE id = 1');
         $selectStmt->execute();
         $highestSalaryCap = $selectStmt->fetch(PDO::FETCH_ASSOC)['highestSalaryCap'];
@@ -621,16 +634,20 @@ class TeamController
 
     /**
      * Gibt die Trainingszeit der Trainingsgruppe des Teams zurück.
-     * @param Team $team - Team zu dem die Trainingszeit selektiert wird.
+     * @param Team $team - Team, zu dem die Trainingszeit selektiert wird.
      * @param string $trainingGroup - Trainingsgruppe Enum('TE1', 'TE2', 'TE3') zu der die Trainingszeit selektiert wird.
-     * @return int|null - Gibt den Datenbankeintrag der Trainingszeit zurück. Null, wenn kein Datenbankeintrag besteht.
+     * @return DateTime|null - Gibt den Datenbankeintrag der Trainingszeit zurück. Null, wenn kein Datenbankeintrag besteht.
+     * @throws \Exception
      */
-    public function getTimeToCount(Team $team, string $trainingGroup): ?int
+    public function getTimeToCount(Team $team, string $trainingGroup): ?DateTime
     {
         $selectStmt = $this->pdo->prepare('SELECT trainingTime FROM `t_team_to_traininggroup` where idTeam = :idTeam and trainingGroup = :trainingGroup');
         $selectStmt->execute(['idTeam' => $team->getId(), 'trainingGroup' => $trainingGroup]);
         $timeResult = $selectStmt->fetch(PDO::FETCH_ASSOC);
-        return $timeResult['trainingTime'];
+        if (!$timeResult || !isset($timeResult['trainingTime'])) {
+            return null;
+        }
+        return new DateTime($timeResult['trainingTime'], new DateTimeZone('Europe/Berlin'));
     }
 
     /**
@@ -671,10 +688,10 @@ class TeamController
      * Falls kein Eintrag besteht, wird ein neuer angelegt, ansonsten wird der vorhandene aktualisiert.
      * @param Team $team - Team zu dem die Zeit gespeichert werden soll.
      * @param string $trainingGroup - Trainingsgruppe Enum('TE1', 'TE2', 'TE3') zu der die Trainingszeit gespeichert wird.
-     * @param int $timeToCount - Zeitstempel, der in der Datenbank gespeichert werden soll.
+     * @param DateTime $timeToCount - Zeitstempel, der in der Datenbank gespeichert werden soll.
      * @return int - lastInsertId: ID des neu eingefügten Stadions oder des aktualisierten Stadions. 0 bei Fehler.
      */
-    public function saveTimeToCount(Team $team, string $trainingGroup, int $timeToCount): int
+    public function saveTimeToCount(Team $team, string $trainingGroup, DateTime $timeToCount): int
     {
         $selectStmt = $this->pdo->prepare('SELECT id from `t_team_to_traininggroup` where idTeam = :idTeam and trainingGroup = :trainingGroup;');
         $selectStmt->execute(['idTeam' => $team->getId(), 'trainingGroup' => $trainingGroup]);
@@ -686,8 +703,8 @@ class TeamController
             'id' => $id ?? null,
             'idTeam' => $team->getId(),
             'trainingGroup' => $trainingGroup,
-            'trainingTime' => $timeToCount,
-            'newTrainingTime' => $timeToCount
+            'trainingTime' => $timeToCount->format('Y-m-d H:i:s'),
+            'newTrainingTime' => $timeToCount->format('Y-m-d H:i:s'),
         ]);
 
         return $this->pdo->lastInsertId();
@@ -730,12 +747,17 @@ class TeamController
     {
         if ($gameplan == 'GameplanOff') {
             $team->setGameplanOff($gameplanNr);
-            $updateStmt = $this->pdo->prepare('UPDATE `t_team` SET gameplanOff = :gameplan where id = :idTeam;');
-        } else {
+            $updateStmt = $this->pdo->prepare('UPDATE `t_team` SET gameplanOff = :gameplanNr where id = :idTeam;');
+        } else if ($gameplan == 'GameplanDef') {
             $team->setGameplanDef($gameplanNr);
-            $updateStmt = $this->pdo->prepare('UPDATE `t_team` SET gameplanDef = :gameplan where id = :idTeam;');
+            $updateStmt = $this->pdo->prepare('UPDATE `t_team` SET gameplanDef = :gameplanNr where id = :idTeam;');
+        } else if ($gameplan == 'GameplanGeneral') {
+            $team->setGameplanGeneral($gameplanNr);
+            $updateStmt = $this->pdo->prepare('UPDATE `t_team` SET gameplanGeneral = :gameplanNr where id = :idTeam;');
         }
-        $updateStmt->execute(['gameplan' => $gameplanNr, 'idTeam' => $team->getId()]);
+        if (!empty($updateStmt)) {
+            $updateStmt->execute(['gameplanNr' => $gameplanNr, 'idTeam' => $team->getId()]);
+        }
     }
 
     /**

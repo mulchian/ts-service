@@ -21,7 +21,9 @@ class UserController
 
     public function fetchUserById(int $userId): ?User
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM `t_user` WHERE id = :id;');
+        $stmt = $this->pdo->prepare('SELECT id, username, email, password, realname, city, gender, 
+            birthday as birthdayString, registerDate as registerDateString, lastActiveTime as lastActiveTimeString, 
+            status, admin, deactivated, activationSent, activated FROM `t_user` WHERE id = :id;');
         $stmt->execute(['id' => $userId]);
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         $user = $stmt->fetch(PDO::FETCH_CLASS);
@@ -34,7 +36,10 @@ class UserController
 
     public function fetchUserByTeam(Team $team): ?User
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM `t_user` tu LEFT JOIN `t_team` tt ON tt.idUser = tu.id WHERE tt.name = :teamname;');
+        $stmt = $this->pdo->prepare('SELECT tu.id, tu.username, tu.email, tu.password, tu.realname, tu.city, tu.gender, 
+            tu.birthday as birthdayString, tu.registerDate as registerDateString, tu.lastActiveTime as lastActiveTimeString, 
+            tu.status, tu.admin, tu.deactivated, tu.activationSent, tu.activated 
+            FROM `t_user` tu LEFT JOIN `t_team` tt ON tt.idUser = tu.id WHERE tt.name = :teamname;');
         $stmt->execute(['teamname' => $team->getName()]);
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         $user = $stmt->fetch(PDO::FETCH_CLASS);
@@ -47,7 +52,10 @@ class UserController
 
     public function fetchUserByNameOrMail(string $username, string $email): ?User
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM `t_user` WHERE username = :username OR email = :email LIMIT 1;');
+        $stmt = $this->pdo->prepare('SELECT id, username, email, password, realname, city, gender, 
+            birthday as birthdayString, registerDate as registerDateString, lastActiveTime as lastActiveTimeString, 
+            status, admin, deactivated, activationSent, activated 
+            FROM `t_user` WHERE username = :username OR email = :email LIMIT 1;');
         $stmt->execute(['username' => $username, 'email' => $email]);
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         $user = $stmt->fetch(PDO::FETCH_CLASS);
@@ -60,7 +68,10 @@ class UserController
 
     public function fetchUser(string $username, string $password): ?User
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM `t_user` WHERE LOWER(username) = LOWER(:username) LIMIT 1;');
+        $stmt = $this->pdo->prepare('SELECT id, username, email, password, realname, city, gender, 
+            birthday as birthdayString, registerDate as registerDateString, lastActiveTime as lastActiveTimeString, 
+            status, admin, deactivated, activationSent, activated 
+            FROM `t_user` WHERE LOWER(username) = LOWER(:username) LIMIT 1;');
         $stmt->execute(['username' => $username]);
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         $user = $stmt->fetch(PDO::FETCH_CLASS);
@@ -88,7 +99,9 @@ class UserController
 
     public function fetchAllUsers(): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM `t_user`;');
+        $stmt = $this->pdo->prepare('SELECT id, username, email, password, realname, city, gender, 
+            birthday as birthdayString, registerDate as registerDateString, lastActiveTime as lastActiveTimeString, 
+            status, admin, deactivated, activationSent, activated FROM `t_user`;');
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
         return $stmt->fetchAll(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
@@ -97,9 +110,11 @@ class UserController
     public function registerNewUser(string $username, string $email, string $password, string $gender = null): ?User
     {
         //Entsprechende Überprüfungen und SQL Queries zum Registrieren des Nutzers.
-        //Gibt z.B. true zurück, falls die Registrierung funktioniert hat.
+        //Gibt z. B. true zurück, falls die Registrierung funktioniert hat.
 
-        $selectUser = 'SELECT * FROM `t_user` WHERE LOWER(username) = LOWER(:username) OR email = :email LIMIT 1;';
+        $selectUser = 'SELECT id, username, email, password, realname, city, gender, birthday as birthdayString, 
+            registerDate as registerDateString, lastActiveTime as lastActiveTimeString, status, admin, deactivated, 
+            activationSent, activated FROM `t_user` WHERE LOWER(username) = LOWER(:username) OR email = :email LIMIT 1;';
         $selectStmt = $this->pdo->prepare($selectUser);
         $selectStmt->execute(['username' => $username, 'email' => $email]);
         $selectStmt->setFetchMode(PDO::FETCH_CLASS, 'touchdownstars\\user\\User');
@@ -107,14 +122,13 @@ class UserController
 
         if (!$user) {
             $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 8]);
-            $insertNewUser = 'INSERT INTO `t_user` (username, email, password, gender, registerDate, lastActiveTime) VALUES (:username, :email, :passwordHash, :gender, NOW(), :lastActiveTime);';
+            $insertNewUser = 'INSERT INTO `t_user` (username, email, password, gender, registerDate, lastActiveTime) VALUES (:username, :email, :passwordHash, :gender, NOW(), NOW());';
             $stmt = $this->pdo->prepare($insertNewUser);
             $stmt->execute([
                 'username' => $username,
                 'email' => $email,
                 'passwordHash' => $passwordHash,
-                'gender' => $gender,
-                'lastActiveTime' => time()
+                'gender' => $gender
             ]);
 
             $user = $this->fetchUser($username, $password);
@@ -134,7 +148,7 @@ class UserController
         $id = $selectStmt->fetch(PDO::FETCH_ASSOC)['id'];
 
         $saveUser = 'INSERT INTO `t_user` (id, username, email, password, realname, city, gender, birthday, registerDate, lastActiveTime, status, deactivated, activationSent, activated) 
-                            VALUES (:id, :username, :email, :password, :realname, :city, :gender, :birthday, NOW(), :lastActiveTime, :status, :isDeactivated, :activationIsSent, :isActivated) 
+                            VALUES (:id, :username, :email, :password, :realname, :city, :gender, :birthday, NOW(), NOW(), :status, :isDeactivated, :activationIsSent, :isActivated) 
                             ON DUPLICATE KEY UPDATE email = :newEmail, password = :newPassword, realname = :newRealname, city = :newCity, gender = :newGender, birthday = :newBirthday, 
                                                     lastActiveTime = :newLastActiveTime, status = :newStatus, deactivated = :newIsDeactivated, activationSent = :newActivationIsSent, activated = :newIsActivated;';
         $saveStmt = $this->pdo->prepare($saveUser);
@@ -146,8 +160,7 @@ class UserController
             'realname' => $user->getRealname(),
             'city' => $user->getCity(),
             'gender' => $user->getGender(),
-            'birthday' => $user->getBirthday(),
-            'lastActiveTime' => time(),
+            'birthday' => $user->getBirthday()->format('Y-m-d H:i:s'),
             'status' => $user->getStatus(),
             'isDeactivated' => (int)$user->isDeactivated(),
             'activationIsSent' => (int)$user->isActivationSent(),
@@ -157,8 +170,8 @@ class UserController
             'newRealname' => $user->getRealname(),
             'newCity' => $user->getCity(),
             'newGender' => $user->getGender(),
-            'newBirthday' => $user->getBirthday(),
-            'newLastActiveTime' => $user->getLastActiveTime(),
+            'newBirthday' => $user->getBirthday()->format('Y-m-d H:i:s'),
+            'newLastActiveTime' => $user->getLastActiveTime()->format('Y-m-d H:i:s'),
             'newStatus' => $user->getStatus(),
             'newIsDeactivated' => (int)$user->isDeactivated(),
             'newActivationIsSent' => (int)$user->isActivationSent(),

@@ -25,7 +25,8 @@ if (isset($pdo, $log, $team)) {
         if (isset($_POST['trainingGroup']) && isset($_POST['training'])) {
             $trainingGroup = $_POST['trainingGroup'];
             $training = $_POST['training'];
-            $timeToCount = time() + 3600;
+            $timeToCount = (new DateTime('now', new DateTimeZone('Europe/Berlin')))->modify(' +1 hour');
+
             switch ($trainingGroup) {
                 case 'TE1':
                     $isTrainingTE1 = $skillController->train($team, $trainingGroup, $training);
@@ -121,15 +122,16 @@ if (isset($pdo, $log, $team)) {
             }
         }
 
-        if (isset($data) && !empty($data)) {
+        if (!empty($data)) {
             echo json_encode($data);
         }
     }
 }
 exit;
 
-function tgIsUpdatable($trainingTime): bool {
-    if ((isset($trainingTime) && $trainingTime < time()) || !isset($trainingTime)) {
+function tgIsUpdatable(?DateTime $trainingTime): bool
+{
+    if (!isset($trainingTime) || $trainingTime < new DateTime('now', new DateTimeZone('Europe/Berlin'))) {
         return true;
     }
     return false;

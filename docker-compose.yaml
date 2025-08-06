@@ -2,12 +2,15 @@ services:
   # nginx
   web:
     image: nginx:1.0.0
+    environment:
+      TZ: "Europe/Berlin"
     ports:
       - "80:80"
   # php
   app:
     image: ts-service:1.0.0
     environment:
+      TZ: "Europe/Berlin"
       MYSQL_HOST: db
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -25,6 +28,7 @@ services:
       - mysql:/var/lib/mysql
     restart: always
     environment:
+      TZ: "Europe/Berlin"
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
@@ -32,5 +36,7 @@ services:
   # redis
   cache:
     image: redis:latest
+    environment:
+      TZ: "Europe/Berlin"
 volumes:
   mysql:

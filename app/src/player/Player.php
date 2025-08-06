@@ -2,6 +2,7 @@
 
 namespace touchdownstars\player;
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -35,6 +36,8 @@ use touchdownstars\player\type\Type;
  * @method void setEnergy(float $energy)
  * @method float getMoral()
  * @method void setMoral(float $moral)
+ * @method float getMinContractMoral()
+ * @method void setMinContractMoral(float $minContractMoral)
  * @method int getExperience()
  * @method void setExperience(int $experience)
  * @method int getTalent()
@@ -44,7 +47,7 @@ use touchdownstars\player\type\Type;
  * @method int getTimeInLeague()
  * @method void setTimeInLeague(int $timeInLeague)
  * @method bool isHallOfFame()
- * @method void setHallOfFame(bool $hallOfFame)
+ * @method void setHallOfFame(bool $isHallOfFame)
  * @method string getTrainingGroup()
  * @method void setTrainingGroup(string $trainingGroup)
  * @method int getIntensity()
@@ -57,6 +60,8 @@ use touchdownstars\player\type\Type;
  * @method void setSkills(array $skills)
  * @method int|null getIdTeam()
  * @method void setIdTeam(int $idTeam)
+ * @method string|null getTeamName()
+ * @method void setTeamName(string $teamName)
  * @method Status getStatus()
  * @method void setStatus(Status $status)
  * @method Character getCharacter()
@@ -74,7 +79,7 @@ use touchdownstars\player\type\Type;
  *
  */
 #[Setter, Getter]
-class Player extends Helper
+class Player extends Helper implements JsonSerializable
 {
     private int $id;
     private string $firstName;
@@ -86,6 +91,7 @@ class Player extends Helper
     private int $marketValue;
     private float $energy;
     private float $moral = 0.8;
+    private float $minContractMoral = 0.75;
     private int $experience;
     private int $talent;
     private float $skillpoints = 0.0;
@@ -97,6 +103,7 @@ class Player extends Helper
     private ?string $lineupPosition = null;
     private array $skills = array();
     private ?int $idTeam = null;
+    private ?string $teamName = null;
 
     private int $idStatus;
     private Status $status;
@@ -131,12 +138,48 @@ class Player extends Helper
                 }
             }
         }
-        return (int) $this->ovr;
+        return (int)$this->ovr;
     }
 
     public function getJson(): string
     {
         $gson = Gson::builder()->build();
         return $gson->toJson($this);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'age' => $this->getAge(),
+            'nationality' => $this->getNationality(),
+            'height' => $this->getHeight(),
+            'weight' => $this->getWeight(),
+            'marketValue' => $this->getMarketValue(),
+            'energy' => $this->getEnergy(),
+            'moral' => $this->getMoral(),
+            'minContractMoral' => $this->getMinContractMoral(),
+            'experience' => $this->getExperience(),
+            'talent' => $this->getTalent(),
+            'skillpoints' => $this->getSkillpoints(),
+            'timeInLeague' => $this->getTimeInLeague(),
+            'hallOfFame' => $this->isHallOfFame(),
+            'trainingGroup' => $this->getTrainingGroup(),
+            'intensity' => $this->getIntensity(),
+            'numberOfTrainings' => $this->getNumberOfTrainings(),
+            'lineupPosition' => $this->getLineupPosition(),
+            'skills' => $this->getSkills(),
+            'ovr' => $this->getOVR(),
+            'idTeam' => $this->getIdTeam(),
+            'teamName' => $this->getTeamName(),
+            'status' => $this->getStatus(),
+            'character' => $this->getCharacter(),
+            'contract' => $this->getContract(),
+            'draftposition' => $this->getDraftposition(),
+            'type' => $this->getType(),
+            'statistics' => $this->getStatistics()
+        ];
     }
 }

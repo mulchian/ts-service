@@ -38,9 +38,9 @@ if (isset($pdo) && isset($log)) {
 //        $sum = explode(';', $standings['score']);
 
         if (!isset($_SESSION['season'], $_SESSION['gameweek']) || (isset($_SESSION['created']) && date('N', $_SESSION['created']) == 7 && date('N', time()) == 1)) {
-            $result = $mainController->fetchSeasonAndGameday();
-            $_SESSION['season'] = $result['season'];
-            $_SESSION['gameweek'] = $result['gameweek'];
+            $main = $mainController->fetchSeasonAndGameday();
+            $_SESSION['season'] = $main->getSeason();
+            $_SESSION['gameweek'] = $main->getGameweek();
         }
 
         $weekDays = array(
@@ -55,9 +55,9 @@ if (isset($pdo) && isset($log)) {
 
         $week = $_SESSION['gameweek'];
 
-        $log->debug('Week: ' . $week);
+        $log->debug('Week: ' . $week->value);
 
-        $mondayGameday = match ($week) {
+        $mondayGameday = match ($week->value) {
             2 => 1,
             3 => 8,
             4 => 15,
@@ -68,7 +68,7 @@ if (isset($pdo) && isset($log)) {
 
         if ($mondayGameday !== 0) {
             $gameDays = array();
-            $maxGamedays = $week == 4 ? 2 : 7;
+            $maxGamedays = $week->value == 4 ? 2 : 7;
             for ($i = 0; $i < $maxGamedays; $i++) {
                 $gameday = $mondayGameday + $i;
                 $log->debug('Season: ' . $_SESSION['season']);

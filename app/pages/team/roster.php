@@ -34,7 +34,7 @@ if (isset($_SESSION['team'])) {
                     <th data-field="ovr" scope="col" data-width="5" data-width-unit="%" data-sortable="true">OVR</th>
                     <th data-field="age" scope="col" data-width="5" data-width-unit="%" data-sortable="true">ALTER</th>
                     <th data-field="player" scope="col" data-width="25" data-width-unit="%" data-sortable="true">SPIELER</th>
-                    <th data-field="talent" scope="col" data-width="10" data-width-unit="%" data-sortable="true">TALENT</th>
+                    <th data-field="talent" scope="col" data-width="10e" data-width-unit="%" data-sortable="true">TALENT</th>
                     <?php if ($table === 'overview') : ?>
                         <th scope="col" data-width="10" data-width-unit="%" data-sortable="true">ENERGIE</th>
                         <th scope="col" data-width="10" data-width-unit="%" data-sortable="true">SP</th>

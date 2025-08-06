@@ -4,6 +4,7 @@
 namespace touchdownstars\coaching;
 
 
+use JsonSerializable;
 use Lombok\Getter;
 use Lombok\Helper;
 use Lombok\Setter;
@@ -32,7 +33,7 @@ use Lombok\Setter;
  * @method void setRating(int $rating)
  */
 #[Setter, Getter]
-class Coaching extends Helper
+class Coaching extends Helper implements JsonSerializable
 {
     private int $id;
     private int $idTeam;
@@ -43,4 +44,27 @@ class Coaching extends Helper
     private string $gameplay1;
     private string $gameplay2;
     private int $rating;
+
+    public function __construct(array $properties=array())
+    {
+        parent::__construct();
+        foreach($properties as $key => $value){
+            $this->{$key} = $value;
+        }
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'idTeam' => $this->getIdTeam(),
+            'gameplanNr' => $this->getGameplanNr(),
+            'teamPart' => $this->getTeamPart(),
+            'down' => $this->getDown(),
+            'playrange' => $this->getPlayrange(),
+            'gameplay1' => $this->getGameplay1(),
+            'gameplay2' => $this->getGameplay2(),
+            'rating' => $this->getRating()
+        ];
+    }
 }
